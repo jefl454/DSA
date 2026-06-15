@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POLY-SHIP — Logistics Algorithm Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --accent: #00e5b0;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --danger: #ef4444;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #475569;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,176,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,176,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* LAYOUT */
+  .shell { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .logo {
+    padding: 1.5rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 3px;
+    letter-spacing: 1px;
+  }
+
+  .nav { padding: 0.75rem 0; flex: 1; }
+
+  .nav-section {
+    padding: 0.5rem 1.25rem 0.25rem;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: var(--mono);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--text2);
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    user-select: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active {
+    background: rgba(0,229,176,0.08);
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+  .nav-item .badge {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 9px;
+    background: var(--surface2);
+    color: var(--text3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .nav-item.active .badge { background: rgba(0,229,176,0.15); color: var(--accent); border-color: rgba(0,229,176,0.3); }
+
+  .sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+
+  /* MAIN */
+  .main { flex: 1; overflow-y: auto; }
+
+  .page { display: none; padding: 2rem; max-width: 900px; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 2rem; }
+  .page-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .page-desc { color: var(--text2); font-size: 14px; margin-top: 0.5rem; line-height: 1.6; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  /* GRAPH VIZ */
+  .graph-area {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  canvas { display: block; width: 100%; }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  select, input[type="text"] {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, input:focus { border-color: var(--accent); }
+  select option { background: var(--surface2); }
+
+  .btn {
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--accent); }
+  .btn.primary {
+    background: rgba(0,229,176,0.12);
+    color: var(--accent);
+    border-color: rgba(0,229,176,0.4);
+  }
+  .btn.primary:hover { background: rgba(0,229,176,0.2); }
+
+  /* OUTPUT TERMINAL */
+  .terminal {
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+    color: #64748b;
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 80px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  .terminal .hl { color: var(--accent); }
+  .terminal .hl2 { color: var(--accent2); }
+  .terminal .hl3 { color: var(--accent3); }
+  .terminal .err { color: var(--danger); }
+  .terminal .dim { color: #2d3748; }
+
+  /* TABLE */
+  .dp-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
+  .dp-table th {
+    background: var(--surface2);
+    color: var(--text3);
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    font-weight: 400;
+    text-align: center;
+  }
+  .dp-table td {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+    color: var(--text2);
+    transition: background 0.2s;
+  }
+  .dp-table td.chosen { background: rgba(0,229,176,0.15); color: var(--accent); }
+  .dp-table td.highlight { background: rgba(59,130,246,0.15); color: var(--accent2); }
+
+  /* BAR CHART */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .bar-label { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 100px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 20px; background: var(--surface2); border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+  .bar-val { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 40px; }
+
+  /* HASH TABLE VIZ */
+  .bucket-list { display: grid; gap: 4px; }
+  .bucket-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .bucket-idx {
+    width: 28px;
+    text-align: right;
+    color: var(--text3);
+  }
+  .bucket-arrow { color: var(--accent); }
+  .bucket-items { display: flex; gap: 6px; flex-wrap: wrap; }
+  .bucket-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: var(--text);
+    font-size: 11px;
+    cursor: default;
+    transition: border-color 0.15s;
+  }
+  .bucket-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .bucket-empty { color: var(--text3); font-style: italic; }
+
+  /* ANAGRAM GROUPS */
+  .anagram-groups { display: flex; flex-wrap: wrap; gap: 10px; }
+  .anagram-group {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    background: var(--surface2);
+  }
+  .anagram-group-label { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+  .anagram-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.25);
+    color: #93c5fd;
+  }
+  .chip.accent { background: rgba(0,229,176,0.1); border-color: rgba(0,229,176,0.25); color: var(--accent); }
+  .chip.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); color: #fcd34d; }
+
+  /* ROLLING HASH */
+  .log-display {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 1px;
+    line-height: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 1rem;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+  }
+  .log-char {
+    width: 18px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: background 0.15s;
+    color: var(--text2);
+    font-size: 12px;
+  }
+  .log-char.match { background: rgba(0,229,176,0.25); color: var(--accent); font-weight: 700; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+  /* MST EDGE LIST */
+  .edge-list { display: flex; flex-direction: column; gap: 6px; }
+  .edge-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background: var(--surface2);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    border: 1px solid var(--border);
+    transition: border-color 0.15s;
+  }
+  .edge-row.selected { border-color: var(--accent); background: rgba(0,229,176,0.06); }
+  .edge-row .cost { margin-left: auto; color: var(--accent3); }
+
+  /* KNAPSACK PRODUCTS */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .product-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    background: var(--surface2);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .product-card:hover { border-color: var(--border2); }
+  .product-card.selected { border-color: var(--accent); background: rgba(0,229,176,0.07); }
+  .product-card .pname { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
+  .product-card .pmeta { font-family: var(--mono); font-size: 10px; color: var(--text2); display: flex; justify-content: space-between; }
+  .product-card .check {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #000;
+  }
+  .product-card.selected .check { display: flex; }
+
+  /* STAT ROW */
+  .stat-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    flex: 1;
+    min-width: 100px;
+  }
+  .stat-label { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 600; font-family: var(--mono); color: var(--accent); }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+  /* STEP INDICATOR */
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border2);
+    transition: background 0.2s;
+  }
+  .step-dot.active { background: var(--accent); }
+
+  /* FIBONACCI VIZ */
+  .fib-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+  .fib-cell {
+    min-width: 36px;
+    padding: 6px 4px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--surface2);
+    transition: all 0.2s;
+  }
+  .fib-cell .n { color: var(--text3); font-size: 9px; margin-bottom: 2px; }
+  .fib-cell .v { color: var(--text); }
+  .fib-cell.active { border-color: var(--accent); background: rgba(0,229,176,0.1); }
+  .fib-cell.active .v { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-title">POLY-SHIP</div>
+    <div class="logo-sub">Algorithm Lab v1.0</div>
+  </div>
+  <div class="nav">
+    <div class="nav-section">Routing</div>
+    <div class="nav-item active" onclick="goto('dijkstra')">
+      <span>⬡</span> Dijkstra <span class="badge">O((V+E)logV)</span>
+    </div>
+    <div class="nav-item" onclick="goto('kruskal')">
+      <span>⬡</span> Kruskal MST <span class="badge">O(E logE)</span>
+    </div>
+
+    <div class="nav-section">Hashing</div>
+    <div class="nav-item" onclick="goto('hashtable')">
+      <span>⬡</span> Hash Table <span class="badge">O(1)</span>
+    </div>
+    <div class="nav-item" onclick="goto('anagram')">
+      <span>⬡</span> Group Anagrams <span class="badge">O(nk logk)</span>
+    </div>
+    <div class="nav-item" onclick="goto('consecutive')">
+      <span>⬡</span> Consecutive <span class="badge">O(n)</span>
+    </div>
+    <div class="nav-item" onclick="goto('subarray')">
+      <span>⬡</span> Subarray Sum <span class="badge">O(n)</span>
+    </div>
+    <div class="nav-item" onclick="goto('rolling')">
+      <span>⬡</span> Rabin-Karp <span class="badge">O(n+m)</span>
+    </div>
+
+    <div class="nav-section">Dynamic Programming</div>
+    <div class="nav-item" onclick="goto('fibonacci')">
+      <span>⬡</span> Fibonacci DP <span class="badge">O(n)</span>
+    </div>
+    <div class="nav-item" onclick="goto('stairs')">
+      <span>⬡</span> Climbing Stairs <span class="badge">O(n)</span>
+    </div>
+    <div class="nav-item" onclick="goto('knapsack')">
+      <span>⬡</span> Knapsack 0/1 <span class="badge">O(n×W)</span>
+    </div>
+  </div>
+  <div class="sidebar-footer">POLY-SHIP © 2024</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- ════════════ DIJKSTRA ════════════ -->
+<div class="page active" id="page-dijkstra">
+  <div class="page-header">
+    <div class="page-tag">Routing / Shortest Path</div>
+    <div class="page-title">Dijkstra Algorithm</div>
+    <div class="page-desc">Tìm tuyến giao hàng ngắn nhất giữa các kho. Dùng min-heap để lấy node có chi phí nhỏ nhất. Độ phức tạp O((V+E) log V).</div>
+  </div>
+
+  <div class="controls">
+    <select id="dijk-src">
+      <option>WH1</option><option>WH2</option><option>HCM</option>
+      <option>DN</option><option>HP</option><option>BD</option><option>LA</option>
+    </select>
+    <span style="color:var(--text3);font-size:13px;">→</span>
+    <select id="dijk-tgt">
+      <option>WH2</option><option>WH1</option><option>HCM</option>
+      <option>DN</option><option>HP</option><option>BD</option><option>LA</option>
+    </select>
+    <button class="btn primary" onclick="runDijkstra()">Tìm đường</button>
+  </div>
+
+  <div class="graph-area">
+    <canvas id="graphCanvas" width="820" height="340"></canvas>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Kết quả</div>
+      <div class="terminal" id="dijk-output">Chọn điểm nguồn và đích rồi nhấn "Tìm đường"...</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Bảng khoảng cách từ nguồn</div>
+      <div class="terminal" id="dijk-dist"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ KRUSKAL ════════════ -->
+<div class="page" id="page-kruskal">
+  <div class="page-header">
+    <div class="page-tag">Routing / MST</div>
+    <div class="page-title">Kruskal + DSU</div>
+    <div class="page-desc">Thiết kế mạng kho tối thiểu (MST). Sắp xếp cạnh theo chi phí tăng dần, dùng DSU để tránh chu trình. Độ phức tạp O(E log E).</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn primary" onclick="runKruskal()">Chạy Kruskal</button>
+    <span style="color:var(--text3);font-size:12px;">Nhấn để xem quá trình chọn cạnh từng bước</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Tất cả cạnh (sắp xếp theo cost)</div>
+      <div class="edge-list" id="kruskal-edges"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">MST đã chọn</div>
+      <div class="edge-list" id="kruskal-mst"></div>
+      <div style="margin-top:1rem;font-family:var(--mono);font-size:12px;color:var(--text3);" id="kruskal-total"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0;">
+    <div class="card-title">DSU — Union-Find log</div>
+    <div class="terminal" id="kruskal-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ HASH TABLE ════════════ -->
+<div class="page" id="page-hashtable">
+  <div class="page-header">
+    <div class="page-tag">Hashing</div>
+    <div class="page-title">Hash Table — Separate Chaining</div>
+    <div class="page-desc">Bảng băm tự cài với separate chaining. Tự động resize khi load factor > 0.75. Tra cứu trung bình O(1).</div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="ht-key" placeholder="Mã đơn (VD: PS-010)" style="width:160px">
+    <input type="text" id="ht-val" placeholder="Khách hàng" style="width:150px">
+    <button class="btn primary" onclick="htSet()">Set</button>
+    <button class="btn" onclick="htGet()">Get</button>
+    <button class="btn" onclick="htDelete()">Delete</button>
+    <button class="btn" onclick="htReset()">Reset</button>
+  </div>
+
+  <div class="stat-row" id="ht-stats"></div>
+
+  <div class="card">
+    <div class="card-title">Bucket visualization</div>
+    <div class="bucket-list" id="ht-buckets"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Log</div>
+    <div class="terminal" id="ht-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ ANAGRAM ════════════ -->
+<div class="page" id="page-anagram">
+  <div class="page-header">
+    <div class="page-tag">Hashing</div>
+    <div class="page-title">Group Anagrams</div>
+    <div class="page-desc">Nhóm các chuỗi là hoán vị của nhau. Key = tuple(sorted(s)). Ứng dụng: nhóm mã SKU/barcode tương tự.</div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="anagram-input" placeholder="Nhập các SKU cách nhau bởi dấu phẩy" style="width:380px">
+    <button class="btn primary" onclick="runAnagram()">Phân nhóm</button>
+    <button class="btn" onclick="anagramReset()">Ví dụ mẫu</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kết quả nhóm</div>
+    <div class="anagram-groups" id="anagram-result"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cách hoạt động</div>
+    <div class="terminal" id="anagram-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ CONSECUTIVE ════════════ -->
+<div class="page" id="page-consecutive">
+  <div class="page-header">
+    <div class="page-tag">Hashing</div>
+    <div class="page-title">Longest Consecutive Sequence</div>
+    <div class="page-desc">Tìm chuỗi ngày liên tiếp dài nhất có đơn hàng. Dùng HashSet để kiểm tra O(1). Tổng O(n).</div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="consec-input" value="15,3,1,7,2,14,16,4,17,13,18,5" style="width:300px">
+    <button class="btn primary" onclick="runConsecutive()">Tìm chuỗi dài nhất</button>
+  </div>
+
+  <div class="stat-row" id="consec-stats"></div>
+
+  <div class="card">
+    <div class="card-title">Biểu đồ ngày có đơn (tháng hiện tại)</div>
+    <div id="consec-calendar" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-family:var(--mono);font-size:11px;text-align:center;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Log</div>
+    <div class="terminal" id="consec-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ SUBARRAY ════════════ -->
+<div class="page" id="page-subarray">
+  <div class="page-header">
+    <div class="page-tag">Hashing</div>
+    <div class="page-title">Subarray Sum = K</div>
+    <div class="page-desc">Đếm dải con có tổng = k dùng prefix sum + hash map. Tổng O(n).</div>
+  </div>
+
+  <div class="controls">
+    <label style="font-size:13px;color:var(--text2);">Doanh thu theo giờ:</label>
+    <input type="text" id="sub-arr" value="3,1,2,4,2,3,1,2,1,4" style="width:240px">
+    <label style="font-size:13px;color:var(--text2);">Target k=</label>
+    <input type="text" id="sub-k" value="6" style="width:50px">
+    <button class="btn primary" onclick="runSubarray()">Tính</button>
+  </div>
+
+  <div class="stat-row" id="sub-stats"></div>
+
+  <div class="card">
+    <div class="card-title">Prefix sum visualization</div>
+    <div id="sub-viz" style="overflow-x:auto;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Các dải tìm được</div>
+    <div class="terminal" id="sub-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ ROLLING HASH ════════════ -->
+<div class="page" id="page-rolling">
+  <div class="page-header">
+    <div class="page-tag">Hashing</div>
+    <div class="page-title">Rabin-Karp — Rolling Hash</div>
+    <div class="page-desc">Tìm pattern trong chuỗi log. Hash cửa sổ trượt O(1) mỗi bước. Tổng O(n+m) trung bình.</div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="rk-text" value="DELOKDELSHIPDELOKFAILDELOKSHIPDELSHIPDEL" style="width:340px">
+    <input type="text" id="rk-pat" placeholder="Pattern (VD: DEL)" style="width:120px">
+    <button class="btn primary" onclick="runRolling()">Tìm kiếm</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Chuỗi log — highlight các vị trí khớp</div>
+    <div class="log-display" id="rk-display"></div>
+  </div>
+
+  <div class="stat-row" id="rk-stats"></div>
+
+  <div class="card">
+    <div class="card-title">Chi tiết</div>
+    <div class="terminal" id="rk-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ FIBONACCI ════════════ -->
+<div class="page" id="page-fibonacci">
+  <div class="page-header">
+    <div class="page-tag">Dynamic Programming</div>
+    <div class="page-title">Fibonacci DP</div>
+    <div class="page-desc">So sánh Memoization (top-down) vs Tabulation (bottom-up). Minh họa cách DP tránh tính lại subproblem.</div>
+  </div>
+
+  <div class="controls">
+    <label style="font-size:13px;color:var(--text2);">n =</label>
+    <input type="text" id="fib-n" value="12" style="width:60px">
+    <button class="btn primary" onclick="runFib()">Tính F(n)</button>
+  </div>
+
+  <div class="stat-row" id="fib-stats"></div>
+
+  <div class="card">
+    <div class="card-title">Bảng F(0) → F(n)</div>
+    <div class="fib-row" id="fib-table"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tabulation step-by-step</div>
+    <div class="terminal" id="fib-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ STAIRS ════════════ -->
+<div class="page" id="page-stairs">
+  <div class="page-header">
+    <div class="page-tag">Dynamic Programming</div>
+    <div class="page-title">Climbing Stairs</div>
+    <div class="page-desc">Số cách leo n bậc, mỗi lần 1 hoặc 2 bậc. f(n) = f(n-1) + f(n-2). Ứng dụng: số tổ hợp giao hàng theo lô.</div>
+  </div>
+
+  <div class="controls">
+    <label style="font-size:13px;color:var(--text2);">Số bậc n =</label>
+    <input type="text" id="stairs-n" value="8" style="width:60px">
+    <button class="btn primary" onclick="runStairs()">Tính</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Số cách leo từ 1 → n</div>
+    <div id="stairs-bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recurrence tree (thu gọn)</div>
+    <div class="terminal" id="stairs-log"></div>
+  </div>
+</div>
+
+<!-- ════════════ KNAPSACK ════════════ -->
+<div class="page" id="page-knapsack">
+  <div class="page-header">
+    <div class="page-tag">Dynamic Programming</div>
+    <div class="page-title">Knapsack 0/1 — Combo Khuyến Mãi</div>
+    <div class="page-desc">Chọn combo sản phẩm đạt giá trị cao nhất trong giới hạn ngân sách. DP 2D và 1D. O(n×W) thời gian, O(W) không gian.</div>
+  </div>
+
+  <div class="controls">
+    <label style="font-size:13px;color:var(--text2);">Ngân sách:</label>
+    <input type="text" id="ks-cap" value="10" style="width:60px">
+    <button class="btn primary" onclick="runKnapsack()">Tối ưu hóa</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Chọn/bỏ sản phẩm (click để toggle)</div>
+    <div class="product-grid" id="ks-products"></div>
+  </div>
+
+  <div class="stat-row" id="ks-stats"></div>
+
+  <div class="card" style="overflow-x:auto;">
+    <div class="card-title">Bảng DP 2D — dp[item][budget]</div>
+    <div id="ks-dp-table"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kết quả</div>
+    <div class="terminal" id="ks-log"></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goto(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'dijkstra') drawGraph(null, []);
+  if (id === 'hashtable') { initHT(); renderHT(); }
+  if (id === 'kruskal') renderKruskalEdges();
+  if (id === 'fibonacci') runFib();
+  if (id === 'knapsack') { renderProducts(); }
+  if (id === 'anagram') anagramReset();
+  if (id === 'rolling') runRolling();
+  if (id === 'subarray') runSubarray();
+  if (id === 'consecutive') runConsecutive();
+  if (id === 'stairs') runStairs();
+}
+
+// ══════════════════════════════════════════
+// GRAPH DATA
+// ══════════════════════════════════════════
+const EDGES = [
+  ["WH1","HCM",5],["WH1","BD",8],["WH1","LA",15],
+  ["WH2","HP",4],["WH2","LA",20],["WH2","DN",14],
+  ["DN","HP",6],["DN","BD",10],["DN","HCM",12],
+  ["HCM","BD",3],["HCM","LA",7],["BD","LA",9],["HP","WH2",4]
+];
+
+const NODE_POS = {
+  "WH1": [80,  170], "WH2": [740, 170],
+  "HCM": [220, 100], "DN":  [620, 100],
+  "HP":  [640, 250], "BD":  [320, 250],
+  "LA":  [420, 170]
+};
+
+function buildAdj(edges) {
+  const g = {};
+  for (const [u,v,c] of edges) {
+    if(!g[u]) g[u]=[];
+    if(!g[v]) g[v]=[];
+    g[u].push([v,c]);
+    g[v].push([u,c]);
+  }
+  return g;
+}
+const GRAPH = buildAdj(EDGES);
+
+function dijkstra(src) {
+  const dist={}, parent={};
+  for(const n of Object.keys(NODE_POS)) { dist[n]=Infinity; parent[n]=null; }
+  dist[src]=0;
+  const heap=[[0,src]]; const vis=new Set();
+  while(heap.length) {
+    heap.sort((a,b)=>a[0]-b[0]);
+    const [d,u]=heap.shift();
+    if(vis.has(u)) continue; vis.add(u);
+    for(const [v,c] of (GRAPH[u]||[])) {
+      const nd=d+c;
+      if(nd<dist[v]) { dist[v]=nd; parent[v]=u; heap.push([nd,v]); }
+    }
+  }
+  return {dist,parent};
+}
+
+function getRoute(parent, src, tgt) {
+  const route=[]; let cur=tgt;
+  while(cur) { route.push(cur); cur=parent[cur]; }
+  return route.reverse();
+}
+
+// CANVAS DRAW
+function drawGraph(highlightPath, mstEdges) {
+  const canvas = document.getElementById('graphCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const isDark = true;
+  const edgeColor = '#2d3748';
+  const edgeHL = '#00e5b0';
+  const mstColor = '#3b82f6';
+  const nodeColor = '#1a2236';
+  const nodeBorder = '#475569';
+  const nodeHL = '#00e5b0';
+  const textColor = '#f1f5f9';
+  const weightColor = '#64748b';
+
+  const pathEdges = new Set();
+  if(highlightPath && highlightPath.length>1) {
+    for(let i=0;i<highlightPath.length-1;i++) {
+      const a=highlightPath[i], b=highlightPath[i+1];
+      pathEdges.add(a+'|'+b); pathEdges.add(b+'|'+a);
+    }
+  }
+  const mstSet = new Set();
+  for(const [u,v] of (mstEdges||[])) { mstSet.add(u+'|'+v); mstSet.add(v+'|'+u); }
+
+  // Draw edges
+  const drawn = new Set();
+  for(const [u,v,c] of EDGES) {
+    const key=u+'|'+v;
+    if(drawn.has(key)||drawn.has(v+'|'+u)) continue;
+    drawn.add(key);
+    const [x1,y1]=NODE_POS[u], [x2,y2]=NODE_POS[v];
+    const isPath=pathEdges.has(key);
+    const isMST=mstSet.has(key);
+    ctx.beginPath();
+    ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+    ctx.strokeStyle = isPath ? edgeHL : isMST ? mstColor : edgeColor;
+    ctx.lineWidth = isPath||isMST ? 2.5 : 1;
+    ctx.stroke();
+    // Weight label
+    const mx=(x1+x2)/2, my=(y1+y2)/2;
+    ctx.fillStyle = isPath ? edgeHL : isMST ? '#60a5fa' : weightColor;
+    ctx.font = '11px Space Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText(c, mx, my-5);
+  }
+
+  // Draw nodes
+  for(const [name,[x,y]] of Object.entries(NODE_POS)) {
+    const isHL = highlightPath && highlightPath.includes(name);
+    ctx.beginPath();
+    ctx.arc(x,y,22,0,Math.PI*2);
+    ctx.fillStyle = isHL ? 'rgba(0,229,176,0.15)' : nodeColor;
+    ctx.fill();
+    ctx.strokeStyle = isHL ? nodeHL : nodeBorder;
+    ctx.lineWidth = isHL ? 2 : 1;
+    ctx.stroke();
+    ctx.fillStyle = isHL ? nodeHL : textColor;
+    ctx.font = isHL ? '600 12px DM Sans' : '12px DM Sans';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(name, x, y);
+  }
+}
+
+function runDijkstra() {
+  const src = document.getElementById('dijk-src').value;
+  const tgt = document.getElementById('dijk-tgt').value;
+  const {dist,parent} = dijkstra(src);
+  const route = getRoute(parent, src, tgt);
+  const cost = dist[tgt];
+
+  drawGraph(route, []);
+
+  const out = document.getElementById('dijk-output');
+  if(cost===Infinity) {
+    out.innerHTML = `<span class="err">Không tìm thấy đường từ ${src} → ${tgt}</span>`;
+  } else {
+    out.innerHTML = `<span class="hl">Tuyến: ${route.join(' → ')}</span>\n<span class="hl3">Chi phí: ${cost}</span>\n\nCác nút đi qua: ${route.length}\nPhương thức: Dijkstra + min-heap`;
+  }
+
+  const distOut = document.getElementById('dijk-dist');
+  let s = `Bảng dist[] từ ${src}:\n\n`;
+  for(const [n,d] of Object.entries(dist).sort((a,b)=>a[1]-b[1])) {
+    const bar = d===Infinity ? '∞' : '▪'.repeat(Math.min(d,20));
+    s += `${n.padEnd(6)} ${String(d).padStart(4)}  ${bar}\n`;
+  }
+  distOut.textContent = s;
+}
+
+// Init
+setTimeout(()=>{
+  drawGraph(null,[]);
+  runDijkstra();
+}, 100);
+
+// ══════════════════════════════════════════
+// KRUSKAL
+// ══════════════════════════════════════════
+const KRUSKAL_EDGES = [
+  ["WH1","HCM",5],["WH1","BD",8],["WH1","LA",15],
+  ["WH2","HP",4],["WH2","LA",20],["WH2","DN",14],
+  ["DN","HP",6],["DN","BD",10],["DN","HCM",12],
+  ["HCM","BD",3],["HCM","LA",7],["BD","LA",9]
+];
+const VERTICES = ["WH1","WH2","HCM","DN","HP","BD","LA"];
+
+function renderKruskalEdges() {
+  const sorted=[...KRUSKAL_EDGES].sort((a,b)=>a[2]-b[2]);
+  const el = document.getElementById('kruskal-edges');
+  el.innerHTML = sorted.map(([u,v,c])=>
+    `<div class="edge-row" id="ke-${u}-${v}">
+      <span style="color:var(--text2)">${u}</span>
+      <span style="color:var(--text3)">↔</span>
+      <span style="color:var(--text2)">${v}</span>
+      <span class="cost">${c}</span>
+    </div>`
+  ).join('');
+}
+
+function runKruskal() {
+  renderKruskalEdges();
+  const sorted=[...KRUSKAL_EDGES].sort((a,b)=>a[2]-b[2]);
+  const parent={}, size={};
+  for(const v of VERTICES) { parent[v]=v; size[v]=1; }
+
+  function find(v) {
+    if(parent[v]!==v) parent[v]=find(parent[v]);
+    return parent[v];
+  }
+  function union(u,v) {
+    let ru=find(u), rv=find(v);
+    if(ru===rv) return false;
+    if(size[ru]<size[rv]) [ru,rv]=[rv,ru];
+    parent[rv]=ru; size[ru]+=size[rv];
+    return true;
+  }
+
+  const mst=[], log=[];
+  let total=0;
+
+  for(const [u,v,c] of sorted) {
+    const joined=union(u,v);
+    log.push(`${joined?'✔':'✘'} (${u}↔${v}) cost=${c} ${joined?'→ thêm vào MST':'→ tạo cycle, bỏ qua'}`);
+    if(joined) { mst.push([u,v,c]); total+=c; }
+    const el=document.getElementById(`ke-${u}-${v}`);
+    if(el) el.classList.toggle('selected', joined);
+  }
+
+  document.getElementById('kruskal-mst').innerHTML = mst.map(([u,v,c])=>
+    `<div class="edge-row selected">
+      <span style="color:var(--accent)">✔</span>
+      <span style="color:var(--text)">${u}</span>
+      <span style="color:var(--text3)">↔</span>
+      <span style="color:var(--text)">${v}</span>
+      <span class="cost">${c}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('kruskal-total').innerHTML =
+    `Tổng chi phí MST: <span style="color:var(--accent)">${total}</span>  |  Số cạnh: ${mst.length}/${VERTICES.length-1}`;
+
+  document.getElementById('kruskal-log').textContent = log.join('\n');
+
+  // Redraw graph with MST edges
+  const graphCanvas = document.getElementById('graphCanvas');
+  if(graphCanvas) drawGraph(null, mst.map(([u,v])=>[u,v]));
+}
+
+setTimeout(renderKruskalEdges, 50);
+
+// ══════════════════════════════════════════
+// HASH TABLE
+// ══════════════════════════════════════════
+let HT_CAP=16, ht_buckets, ht_size;
+
+function htHash(key) {
+  let h=0;
+  for(let i=0;i<key.length;i++) h=(h*31+key.charCodeAt(i))%HT_CAP;
+  return h;
+}
+
+function initHT() {
+  HT_CAP=8; ht_size=0;
+  ht_buckets=Array.from({length:HT_CAP},()=>[]);
+  const orders=[
+    ["PS-001","Nguyen Van A · 350,000đ · delivered"],
+    ["PS-002","Tran Thi B · 120,000đ · shipping"],
+    ["PS-003","Le Van C · 890,000đ · pending"],
+    ["PS-004","Pham Thi D · 450,000đ · delivered"],
+    ["PS-005","Hoang Van E · 200,000đ · cancelled"],
+    ["PS-006","Vu Thi F · 670,000đ · shipping"],
+  ];
+  for(const [k,v] of orders) _htSet(k,v);
+}
+
+function _htSet(key,val) {
+  if(ht_size/HT_CAP>0.75) {
+    const old=ht_buckets; HT_CAP*=2; ht_buckets=Array.from({length:HT_CAP},()=>[]); ht_size=0;
+    for(const b of old) for(const [k,v] of b) _htSet(k,v);
+  }
+  const idx=htHash(key);
+  for(let i=0;i<ht_buckets[idx].length;i++) {
+    if(ht_buckets[idx][i][0]===key) { ht_buckets[idx][i][1]=val; return; }
+  }
+  ht_buckets[idx].push([key,val]); ht_size++;
+}
+
+function htSet() {
+  const k=document.getElementById('ht-key').value.trim();
+  const v=document.getElementById('ht-val').value.trim()||'(no data)';
+  if(!k) return;
+  _htSet(k,v);
+  log('ht-log', `SET [${k}] → bucket[${htHash(k)}]`);
+  renderHT();
+}
+
+function htGet() {
+  const k=document.getElementById('ht-key').value.trim();
+  const idx=htHash(k);
+  const bucket=ht_buckets[idx]||[];
+  const found=bucket.find(([bk])=>bk===k);
+  log('ht-log', found ? `GET [${k}] → ${found[1]}` : `GET [${k}] → NOT FOUND`);
+  renderHT(k);
+}
+
+function htDelete() {
+  const k=document.getElementById('ht-key').value.trim();
+  const idx=htHash(k);
+  const b=ht_buckets[idx];
+  const i=b.findIndex(([bk])=>bk===k);
+  if(i>=0) { b.splice(i,1); ht_size--; log('ht-log', `DELETE [${k}] ✔`); }
+  else log('ht-log', `DELETE [${k}] → NOT FOUND`);
+  renderHT();
+}
+
+function htReset() { initHT(); renderHT(); log('ht-log','Reset bảng băm về mặc định'); }
+
+function renderHT(highlight) {
+  const el=document.getElementById('ht-buckets');
+  let html='';
+  for(let i=0;i<HT_CAP;i++) {
+    const b=ht_buckets[i];
+    html+=`<div class="bucket-row">
+      <span class="bucket-idx">${i}</span>
+      <span class="bucket-arrow">→</span>
+      <div class="bucket-items">`;
+    if(b.length===0) html+=`<span class="bucket-empty">empty</span>`;
+    else for(const [k,v] of b) {
+      const isHL=(k===highlight);
+      html+=`<span class="bucket-chip" style="${isHL?'border-color:var(--accent);color:var(--accent)':''}" title="${v}">${k}</span>`;
+    }
+    html+=`</div></div>`;
+  }
+  el.innerHTML=html;
+  document.getElementById('ht-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">capacity</div><div class="stat-value">${HT_CAP}</div></div>
+    <div class="stat"><div class="stat-label">size</div><div class="stat-value">${ht_size}</div></div>
+    <div class="stat"><div class="stat-label">load factor</div><div class="stat-value">${(ht_size/HT_CAP).toFixed(2)}</div></div>
+  `;
+}
+
+initHT(); setTimeout(()=>renderHT(),50);
+
+// ══════════════════════════════════════════
+// ANAGRAM
+// ══════════════════════════════════════════
+function groupAnagrams(strings) {
+  const t={};
+  for(const s of strings) {
+    const k=[...s].sort().join('');
+    if(!t[k]) t[k]=[];
+    t[k].push(s);
+  }
+  return Object.values(t);
+}
+
+const colors=['','accent','amber'];
+function runAnagram() {
+  const raw=document.getElementById('anagram-input').value;
+  const arr=raw.split(',').map(s=>s.trim()).filter(Boolean);
+  const groups=groupAnagrams(arr);
+
+  const el=document.getElementById('anagram-result');
+  el.innerHTML=groups.map((g,i)=>
+    `<div class="anagram-group">
+      <div class="anagram-group-label">Nhóm ${i+1} — key: ${[...g[0]].sort().join('')}</div>
+      <div class="anagram-chips">${g.map(s=>`<span class="chip ${colors[i%3]}">${s}</span>`).join('')}</div>
+    </div>`
+  ).join('');
+
+  const logEl=document.getElementById('anagram-log');
+  let s='Quá trình:\n';
+  for(const x of arr) {
+    const k=[...x].sort().join('');
+    s+=`  "${x}" → sorted → "${k}"\n`;
+  }
+  s+=`\nKết quả: ${groups.length} nhóm`;
+  logEl.textContent=s;
+}
+
+function anagramReset() {
+  document.getElementById('anagram-input').value='ABCD,DCBA,BCDA,EFGH,HGFE,IJKL,ABDC,FGEH,XYZ';
+  runAnagram();
+}
+setTimeout(anagramReset,50);
+
+// ══════════════════════════════════════════
+// CONSECUTIVE
+// ══════════════════════════════════════════
+function longestConsecutive(nums) {
+  const s=new Set(nums); let best=0;
+  for(const n of s) {
+    if(!s.has(n-1)) {
+      let cur=n,len=1;
+      while(s.has(cur+1)){cur++;len++;}
+      if(len>best) best=len;
+    }
+  }
+  return best;
+}
+
+function findConsecSeq(nums) {
+  const s=new Set(nums); let bestStart=0,bestLen=0;
+  for(const n of s) {
+    if(!s.has(n-1)) {
+      let cur=n,len=1;
+      while(s.has(cur+1)){cur++;len++;}
+      if(len>bestLen){bestLen=len;bestStart=n;}
+    }
+  }
+  return Array.from({length:bestLen},(_,i)=>bestStart+i);
+}
+
+function runConsecutive() {
+  const arr=document.getElementById('consec-input').value.split(',').map(Number).filter(n=>!isNaN(n));
+  const result=longestConsecutive(arr);
+  const seq=findConsecSeq(arr);
+
+  document.getElementById('consec-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">Tổng ngày có đơn</div><div class="stat-value">${arr.length}</div></div>
+    <div class="stat"><div class="stat-label">Chuỗi dài nhất</div><div class="stat-value">${result}</div></div>
+    <div class="stat"><div class="stat-label">Từ ngày</div><div class="stat-value">${seq[0]||'—'}</div></div>
+    <div class="stat"><div class="stat-label">Đến ngày</div><div class="stat-value">${seq[seq.length-1]||'—'}</div></div>
+  `;
+
+  const cal=document.getElementById('consec-calendar');
+  const days=['T2','T3','T4','T5','T6','T7','CN'];
+  let html=days.map(d=>`<div style="color:var(--text3);font-size:10px;padding:4px 0">${d}</div>`).join('');
+  // Offset for starting day (simulate month starting Monday)
+  const start=1, end=30;
+  const offset=0;
+  for(let i=0;i<offset;i++) html+=`<div></div>`;
+  for(let d=start;d<=end;d++) {
+    const hasOrder=arr.includes(d);
+    const isSeq=seq.includes(d);
+    html+=`<div style="padding:5px 2px;text-align:center;border-radius:6px;font-size:11px;cursor:default;
+      background:${isSeq?'rgba(0,229,176,0.2)':hasOrder?'rgba(59,130,246,0.15)':'transparent'};
+      color:${isSeq?'var(--accent)':hasOrder?'var(--accent2)':'var(--text3)'};
+      border:1px solid ${isSeq?'rgba(0,229,176,0.35)':hasOrder?'rgba(59,130,246,0.25)':'transparent'}">${d}</div>`;
+  }
+  cal.innerHTML=html;
+
+  const logEl=document.getElementById('consec-log');
+  logEl.textContent=`Ngày có đơn: [${[...arr].sort((a,b)=>a-b).join(', ')}]\n\nHashSet: O(1) lookup\nChuỗi dài nhất: [${seq.join(' → ')}]\nĐộ dài: ${result} ngày`;
+}
+setTimeout(runConsecutive,50);
+
+// ══════════════════════════════════════════
+// SUBARRAY SUM
+// ══════════════════════════════════════════
+function subarraySum(nums,k) {
+  const pre={0:1}; let ps=0,count=0; const subarrays=[];
+  for(let i=0;i<nums.length;i++) {
+    ps+=nums[i];
+    const need=ps-k;
+    if(pre[need]) { count+=pre[need]; }
+    pre[ps]=(pre[ps]||0)+1;
+  }
+  // find actual subarrays
+  for(let i=0;i<nums.length;i++) {
+    let s=0;
+    for(let j=i;j<nums.length;j++) {
+      s+=nums[j];
+      if(s===k) subarrays.push([i,j]);
+    }
+  }
+  return {count,subarrays};
+}
+
+function runSubarray() {
+  const arr=document.getElementById('sub-arr').value.split(',').map(Number).filter(n=>!isNaN(n));
+  const k=parseInt(document.getElementById('sub-k').value)||6;
+  const {count,subarrays}=subarraySum(arr,k);
+
+  document.getElementById('sub-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">Mảng</div><div class="stat-value">[${arr.join(',')}]</div></div>
+    <div class="stat"><div class="stat-label">Target k</div><div class="stat-value">${k}</div></div>
+    <div class="stat"><div class="stat-label">Số dải tìm được</div><div class="stat-value">${count}</div></div>
+  `;
+
+  // Prefix sum table
+  let ps=[0]; for(const x of arr) ps.push(ps[ps.length-1]+x);
+  const viz=document.getElementById('sub-viz');
+  let html=`<table class="dp-table"><tr><th>index</th>`;
+  for(let i=0;i<=arr.length;i++) html+=`<th>${i}</th>`;
+  html+=`</tr><tr><th>value</th><td class="dim">—</td>`;
+  for(const x of arr) html+=`<td>${x}</td>`;
+  html+=`</tr><tr><th>prefix</th>`;
+  for(const p of ps) html+=`<td>${p}</td>`;
+  html+=`</tr></table>`;
+  viz.innerHTML=html;
+
+  const logEl=document.getElementById('sub-log');
+  let s=`Prefix sum: [${ps.join(', ')}]\n\n`;
+  s+=`Các dải có tổng = ${k}:\n`;
+  for(const [i,j] of subarrays) {
+    s+=`  arr[${i}..${j}] = [${arr.slice(i,j+1).join('+')}] = ${k}\n`;
+  }
+  s+=`\nTổng: ${count} dải`;
+  logEl.textContent=s;
+}
+setTimeout(runSubarray,50);
+
+// ══════════════════════════════════════════
+// ROLLING HASH (Rabin-Karp)
+// ══════════════════════════════════════════
+function rollingHashSearch(text,pattern) {
+  const n=text.length, m=pattern.length;
+  if(m>n) return [];
+  const BASE=31, MOD=1000000007n;
+  const charVal=c=>{
+    const cc=c.charCodeAt(0);
+    if(cc>=97&&cc<=122) return BigInt(cc-96);
+    return BigInt(cc-64+26);
+  };
+  let pH=0n, wH=0n, power=1n;
+  for(let i=0;i<m;i++) {
+    pH=(pH*BigInt(BASE)+charVal(pattern[i]))%MOD;
+    wH=(wH*BigInt(BASE)+charVal(text[i]))%MOD;
+    if(i<m-1) power=(power*BigInt(BASE))%MOD;
+  }
+  const res=[];
+  for(let i=0;i<=n-m;i++) {
+    if(wH===pH && text.slice(i,i+m)===pattern) res.push(i);
+    if(i<n-m) {
+      wH=(wH-charVal(text[i])*power%MOD+MOD)%MOD;
+      wH=(wH*BigInt(BASE)+charVal(text[i+m]))%MOD;
+    }
+  }
+  return res;
+}
+
+function runRolling() {
+  const text=document.getElementById('rk-text').value||'DELOKDELSHIPDELOKFAILDELOKSHIPDELSHIPDEL';
+  const pat=document.getElementById('rk-pat').value.trim()||'DEL';
+
+  const positions=rollingHashSearch(text,pat);
+  const matchSet=new Set();
+  for(const p of positions) for(let i=p;i<p+pat.length;i++) matchSet.add(i);
+
+  const disp=document.getElementById('rk-display');
+  disp.innerHTML=[...text].map((c,i)=>
+    `<span class="log-char ${matchSet.has(i)?'match':''}">${c}</span>`
+  ).join('');
+
+  document.getElementById('rk-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">Text length</div><div class="stat-value">${text.length}</div></div>
+    <div class="stat"><div class="stat-label">Pattern</div><div class="stat-value">"${pat}"</div></div>
+    <div class="stat"><div class="stat-label">Tìm thấy</div><div class="stat-value">${positions.length} lần</div></div>
+  `;
+
+  document.getElementById('rk-log').textContent=
+    positions.length
+      ? `Pattern "${pat}" tìm thấy tại: [${positions.join(', ')}]\n\nChi tiết:\n`+
+        positions.map(p=>`  pos[${p}]: "${text.slice(p,p+pat.length)}"`).join('\n')
+      : `Pattern "${pat}" KHÔNG TÌM THẤY trong chuỗi log.`;
+}
+setTimeout(runRolling,50);
+
+// ══════════════════════════════════════════
+// FIBONACCI
+// ══════════════════════════════════════════
+function runFib() {
+  let n=parseInt(document.getElementById('fib-n').value)||12;
+  n=Math.max(0,Math.min(n,30));
+  const dp=[0,1]; const steps=[];
+  for(let i=2;i<=n;i++) { dp[i]=dp[i-1]+dp[i-2]; steps.push(`F(${i}) = F(${i-1})+F(${i-2}) = ${dp[i-1]}+${dp[i-2]} = ${dp[i]}`); }
+
+  const tbl=document.getElementById('fib-table');
+  tbl.innerHTML=dp.map((v,i)=>
+    `<div class="fib-cell ${i===n?'active':''}">
+      <div class="n">${i}</div>
+      <div class="v">${v}</div>
+    </div>`
+  ).join('');
+
+  document.getElementById('fib-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">F(${n})</div><div class="stat-value">${dp[n]}</div></div>
+    <div class="stat"><div class="stat-label">Phương pháp</div><div class="stat-value" style="font-size:13px">Tabulation</div></div>
+    <div class="stat"><div class="stat-label">Space</div><div class="stat-value">O(1)</div></div>
+  `;
+
+  document.getElementById('fib-log').textContent=
+    `Base cases: F(0)=0, F(1)=1\n\n`+steps.slice(-10).join('\n');
+}
+setTimeout(runFib,50);
+
+// ══════════════════════════════════════════
+// CLIMBING STAIRS
+// ══════════════════════════════════════════
+function climbingStairs(n) {
+  if(n<=1) return 1;
+  let a=1,b=1;
+  for(let i=2;i<=n;i++) { const c=a+b; a=b; b=c; }
+  return b;
+}
+
+function runStairs() {
+  let n=parseInt(document.getElementById('stairs-n').value)||8;
+  n=Math.max(1,Math.min(n,20));
+  const vals=Array.from({length:n},(_,i)=>({n:i+1,v:climbingStairs(i+1)}));
+  const max=Math.max(...vals.map(x=>x.v));
+
+  const bars=document.getElementById('stairs-bars');
+  bars.innerHTML=vals.map(({n:i,v})=>`
+    <div class="bar-row">
+      <div class="bar-label">${i} bậc</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(v/max*100).toFixed(1)}%;background:${i===n?'var(--accent)':'var(--accent2)'}"></div>
+      </div>
+      <div class="bar-val">${v}</div>
+    </div>`).join('');
+
+  document.getElementById('stairs-log').textContent=
+    `f(n) = f(n-1) + f(n-2)\n\n`+vals.map(({n:i,v})=>`  f(${i}) = ${v}`).join('\n');
+}
+setTimeout(runStairs,50);
+
+// ══════════════════════════════════════════
+// KNAPSACK
+// ══════════════════════════════════════════
+const PRODUCTS=[
+  {name:"Áo thun",      w:2, v:30},
+  {name:"Quần jean",    w:4, v:70},
+  {name:"Giày thể thao",w:5, v:90},
+  {name:"Túi xách",     w:3, v:50},
+  {name:"Mũ lưỡi trai",w:1, v:20},
+  {name:"Dép sandal",   w:2, v:35},
+  {name:"Balo laptop",  w:6, v:110},
+];
+
+let KS_SELECTED=new Set([0,1,2,3,4,5,6]);
+
+function renderProducts() {
+  const el=document.getElementById('ks-products');
+  el.innerHTML=PRODUCTS.map((p,i)=>`
+    <div class="product-card ${KS_SELECTED.has(i)?'selected':''}" onclick="toggleProduct(${i})">
+      <div class="check">✓</div>
+      <div class="pname">${p.name}</div>
+      <div class="pmeta"><span>w=${p.w}</span><span>v=${p.v}</span></div>
+    </div>`).join('');
+}
+
+function toggleProduct(i) {
+  if(KS_SELECTED.has(i)) KS_SELECTED.delete(i);
+  else KS_SELECTED.add(i);
+  renderProducts();
+}
+
+function runKnapsack() {
+  const cap=parseInt(document.getElementById('ks-cap').value)||10;
+  const items=PRODUCTS.filter((_,i)=>KS_SELECTED.has(i));
+  const ws=items.map(p=>p.w), vs=items.map(p=>p.v);
+  const n=items.length;
+
+  const dp=Array.from({length:n+1},()=>new Array(cap+1).fill(0));
+  for(let i=1;i<=n;i++) {
+    for(let w=0;w<=cap;w++) {
+      dp[i][w]=dp[i-1][w];
+      if(w>=ws[i-1]) dp[i][w]=Math.max(dp[i][w],dp[i-1][w-ws[i-1]]+vs[i-1]);
+    }
+  }
+
+  // Traceback
+  const chosen=new Set(); let w=cap;
+  for(let i=n;i>0;i--) {
+    if(dp[i][w]!==dp[i-1][w]) { chosen.add(i-1); w-=ws[i-1]; }
+  }
+
+  // Stats
+  const totalW=chosen.size?[...chosen].reduce((s,i)=>s+ws[i],0):0;
+  document.getElementById('ks-stats').innerHTML=`
+    <div class="stat"><div class="stat-label">Ngân sách</div><div class="stat-value">${cap}</div></div>
+    <div class="stat"><div class="stat-label">Max value</div><div class="stat-value">${dp[n][cap]}</div></div>
+    <div class="stat"><div class="stat-label">Tổng weight</div><div class="stat-value">${totalW}/${cap}</div></div>
+    <div class="stat"><div class="stat-label">Items chọn</div><div class="stat-value">${chosen.size}</div></div>
+  `;
+
+  // DP table
+  const tblDiv=document.getElementById('ks-dp-table');
+  let html=`<table class="dp-table"><tr><th>item\budget</th>`;
+  for(let ww=0;ww<=cap;ww++) html+=`<th>${ww}</th>`;
+  html+=`</tr>`;
+  for(let i=0;i<=n;i++) {
+    const label=i===0?'base':items[i-1].name.substring(0,6);
+    html+=`<tr><th>${label}</th>`;
+    for(let ww=0;ww<=cap;ww++) {
+      const isChosen=i>0&&chosen.has(i-1)&&ww===cap;
+      html+=`<td class="${dp[i][ww]===dp[n][cap]&&i===n?'chosen':dp[i][ww]>0&&i===n?'highlight':''}">${dp[i][ww]}</td>`;
+    }
+    html+=`</tr>`;
+  }
+  html+=`</table>`;
+  tblDiv.innerHTML=html;
+
+  const logEl=document.getElementById('ks-log');
+  let s=`Knapsack 0/1 DP — Ngân sách: ${cap}\n\n`;
+  s+=`Items có sẵn:\n`;
+  for(let i=0;i<n;i++) s+=`  ${items[i].name.padEnd(16)} w=${ws[i]} v=${vs[i]}\n`;
+  s+=`\nItems được chọn (traceback):\n`;
+  for(const i of chosen) s+=`  ✔ ${items[i].name.padEnd(16)} w=${ws[i]} v=${vs[i]}\n`;
+  s+=`\nTổng giá trị: ${dp[n][cap]}\nTổng weight: ${totalW}/${cap}`;
+  logEl.textContent=s;
+}
+
+renderProducts();
+setTimeout(runKnapsack,50);
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function log(id, msg) {
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=(el.textContent?el.textContent+'\n':'')+msg;
+  el.scrollTop=el.scrollHeight;
+}
+</script>
+</body>
+</html>
