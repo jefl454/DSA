@@ -1,350 +1,748 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POLY-SHIP — DSA Lab (3 bài)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POLY-SHIP — DSA Lab (3 bài)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  :root {
-    --bg: #0a0e17;
-    --surface: #111827;
-    --surface2: #1a2236;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.15);
-    --accent: #00e5b0;
-    --accent2: #3b82f6;
-    --accent3: #f59e0b;
-    --danger: #ef4444;
-    --text: #f1f5f9;
-    --text2: #94a3b8;
-    --text3: #475569;
-    --mono: 'Space Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
-    --radius: 10px;
-    --radius-lg: 16px;
-  }
+      :root {
+        --bg: #0a0e17;
+        --surface: #111827;
+        --surface2: #1a2236;
+        --border: rgba(255, 255, 255, 0.08);
+        --border2: rgba(255, 255, 255, 0.15);
+        --accent: #00e5b0;
+        --accent2: #3b82f6;
+        --accent3: #f59e0b;
+        --danger: #ef4444;
+        --text: #f1f5f9;
+        --text2: #94a3b8;
+        --text3: #475569;
+        --mono: "Space Mono", monospace;
+        --sans: "DM Sans", sans-serif;
+        --radius: 10px;
+        --radius-lg: 16px;
+      }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,176,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,176,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 229, 176, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 229, 176, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
 
-  .shell { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+      .shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
 
-  /* SIDEBAR */
-  .sidebar {
-    width: 260px;
-    flex-shrink: 0;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-  }
+      /* SIDEBAR */
+      .sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
 
-  .logo { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid var(--border); }
-  .logo-title { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; }
-  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 3px; letter-spacing: 1px; }
+      .logo {
+        padding: 1.5rem 1.25rem 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .logo-title {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+      .logo-sub {
+        font-size: 11px;
+        color: var(--text3);
+        margin-top: 3px;
+        letter-spacing: 1px;
+      }
 
-  .nav { padding: 0.75rem 0; flex: 1; }
-  .nav-section { padding: 0.5rem 1.25rem 0.25rem; font-size: 10px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; font-family: var(--mono); }
+      .nav {
+        padding: 0.75rem 0;
+        flex: 1;
+      }
+      .nav-section {
+        padding: 0.5rem 1.25rem 0.25rem;
+        font-size: 10px;
+        color: var(--text3);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-family: var(--mono);
+      }
 
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 0.55rem 1.25rem; cursor: pointer; font-size: 13.5px;
-    color: var(--text2); transition: all 0.15s;
-    border-left: 2px solid transparent; user-select: none;
-  }
-  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-  .nav-item.active { background: rgba(0,229,176,0.08); color: var(--accent); border-left-color: var(--accent); }
-  .nav-item .badge {
-    margin-left: auto; font-family: var(--mono); font-size: 9px;
-    background: var(--surface2); color: var(--text3); padding: 2px 6px;
-    border-radius: 4px; border: 1px solid var(--border);
-  }
-  .nav-item.active .badge { background: rgba(0,229,176,0.15); color: var(--accent); border-color: rgba(0,229,176,0.3); }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.55rem 1.25rem;
+        cursor: pointer;
+        font-size: 13.5px;
+        color: var(--text2);
+        transition: all 0.15s;
+        border-left: 2px solid transparent;
+        user-select: none;
+      }
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: rgba(0, 229, 176, 0.08);
+        color: var(--accent);
+        border-left-color: var(--accent);
+      }
+      .nav-item .badge {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 9px;
+        background: var(--surface2);
+        color: var(--text3);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+      }
+      .nav-item.active .badge {
+        background: rgba(0, 229, 176, 0.15);
+        color: var(--accent);
+        border-color: rgba(0, 229, 176, 0.3);
+      }
 
-  .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); font-family: var(--mono); }
+      .sidebar-footer {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid var(--border);
+        font-size: 11px;
+        color: var(--text3);
+        font-family: var(--mono);
+      }
 
-  /* MAIN */
-  .main { flex: 1; overflow-y: auto; }
-  .page { display: none; padding: 2rem; max-width: 900px; }
-  .page.active { display: block; }
+      /* MAIN */
+      .main {
+        flex: 1;
+        overflow-y: auto;
+      }
+      .page {
+        display: none;
+        padding: 2rem;
+        max-width: 900px;
+      }
+      .page.active {
+        display: block;
+      }
 
-  /* PAGE HEADER */
-  .page-header { margin-bottom: 2rem; }
-  .page-tag { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; }
-  .page-title { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
-  .page-desc { color: var(--text2); font-size: 14px; margin-top: 0.5rem; line-height: 1.6; }
+      /* PAGE HEADER */
+      .page-header {
+        margin-bottom: 2rem;
+      }
+      .page-tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+      .page-title {
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+      .page-desc {
+        color: var(--text2);
+        font-size: 14px;
+        margin-top: 0.5rem;
+        line-height: 1.6;
+      }
 
-  /* EXPLAIN BOX */
-  .explain-box {
-    background: rgba(0,229,176,0.05);
-    border: 1px solid rgba(0,229,176,0.15);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.7;
-  }
-  .explain-box strong { color: var(--accent); font-weight: 600; }
-  .explain-box .step { margin-top: 0.5rem; display: flex; gap: 8px; align-items: flex-start; }
-  .explain-box .step-num {
-    min-width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(0,229,176,0.15); color: var(--accent);
-    font-family: var(--mono); font-size: 11px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
+      /* EXPLAIN BOX */
+      .explain-box {
+        background: rgba(0, 229, 176, 0.05);
+        border: 1px solid rgba(0, 229, 176, 0.15);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 13px;
+        color: var(--text2);
+        line-height: 1.7;
+      }
+      .explain-box strong {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .explain-box .step {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .explain-box .step-num {
+        min-width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(0, 229, 176, 0.15);
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
 
-  /* CARDS */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
-  .card-title { font-family: var(--mono); font-size: 11px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 1rem; }
+      /* CARDS */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+      .card-title {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text3);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
 
-  /* CONTROLS */
-  .controls { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; align-items: center; }
-  select, input[type="text"] {
-    background: var(--surface2); border: 1px solid var(--border2); color: var(--text);
-    padding: 0.45rem 0.75rem; border-radius: var(--radius); font-family: var(--sans);
-    font-size: 13px; outline: none; transition: border-color 0.15s;
-  }
-  select:focus, input:focus { border-color: var(--accent); }
-  .btn { padding: 0.45rem 1rem; border-radius: var(--radius); border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: var(--sans); font-size: 13px; cursor: pointer; transition: all 0.15s; }
-  .btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--accent); }
-  .btn.primary { background: rgba(0,229,176,0.12); color: var(--accent); border-color: rgba(0,229,176,0.4); }
-  .btn.primary:hover { background: rgba(0,229,176,0.2); }
+      /* CONTROLS */
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        align-items: center;
+      }
+      select,
+      input[type="text"] {
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        color: var(--text);
+        padding: 0.45rem 0.75rem;
+        border-radius: var(--radius);
+        font-family: var(--sans);
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      select:focus,
+      input:focus {
+        border-color: var(--accent);
+      }
+      .btn {
+        padding: 0.45rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border2);
+        background: transparent;
+        color: var(--text2);
+        font-family: var(--sans);
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border-color: var(--accent);
+      }
+      .btn.primary {
+        background: rgba(0, 229, 176, 0.12);
+        color: var(--accent);
+        border-color: rgba(0, 229, 176, 0.4);
+      }
+      .btn.primary:hover {
+        background: rgba(0, 229, 176, 0.2);
+      }
 
-  /* TERMINAL */
-  .terminal { background: #050810; border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; font-family: var(--mono); font-size: 12px; line-height: 1.8; color: #64748b; white-space: pre-wrap; word-break: break-all; min-height: 80px; max-height: 320px; overflow-y: auto; }
-  .terminal .hl { color: var(--accent); }
-  .terminal .hl2 { color: var(--accent2); }
-  .terminal .hl3 { color: var(--accent3); }
+      /* TERMINAL */
+      .terminal {
+        background: #050810;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.8;
+        color: #64748b;
+        white-space: pre-wrap;
+        word-break: break-all;
+        min-height: 80px;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      .terminal .hl  { color: var(--accent); }
+      .terminal .hl2 { color: var(--accent2); }
+      .terminal .hl3 { color: var(--accent3); }
 
-  /* CODE BLOCK */
-  .code-block {
-    background: #050810;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    font-family: var(--mono);
-    font-size: 12px;
-    line-height: 1.9;
-    color: #94a3b8;
-    white-space: pre;
-    overflow-x: auto;
-    margin-bottom: 0;
-  }
-  .code-block .kw  { color: #c084fc; }   /* keyword */
-  .code-block .fn  { color: #60a5fa; }   /* function */
-  .code-block .num { color: #f59e0b; }   /* number/const */
-  .code-block .str { color: #86efac; }   /* string */
-  .code-block .cm  { color: #374151; }   /* comment */
-  .code-block .hl  { color: var(--accent); font-weight: 700; }  /* highlight key line */
+      /* CODE BLOCK */
+      .code-block {
+        background: #050810;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.9;
+        color: #94a3b8;
+        white-space: pre;
+        overflow-x: auto;
+        margin-bottom: 0;
+      }
+      .code-block .kw  { color: #c084fc; } /* keyword */
+      .code-block .fn  { color: #60a5fa; } /* function */
+      .code-block .num { color: #f59e0b; } /* number/const */
+      .code-block .str { color: #86efac; } /* string */
+      .code-block .cm  { color: #374151; } /* comment */
+      .code-block .hl  { color: var(--accent); font-weight: 700; } /* highlight key line */
 
-  /* TABLE */
-  .dp-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
-  .dp-table th { background: var(--surface2); color: var(--text3); padding: 5px 8px; border: 1px solid var(--border); font-weight: 400; text-align: center; }
-  .dp-table td { padding: 4px 8px; border: 1px solid var(--border); text-align: center; color: var(--text2); transition: background 0.2s; }
-  .dp-table td.chosen { background: rgba(0,229,176,0.15); color: var(--accent); }
-  .dp-table td.highlight { background: rgba(59,130,246,0.15); color: var(--accent2); }
-  .dp-table td.traced { background: rgba(245,158,11,0.15); color: #fcd34d; }
+      /* TABLE */
+      .dp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .dp-table th {
+        background: var(--surface2);
+        color: var(--text3);
+        padding: 5px 8px;
+        border: 1px solid var(--border);
+        font-weight: 400;
+        text-align: center;
+      }
+      .dp-table td {
+        padding: 4px 8px;
+        border: 1px solid var(--border);
+        text-align: center;
+        color: var(--text2);
+        transition: background 0.2s;
+      }
+      .dp-table td.chosen {
+        background: rgba(0, 229, 176, 0.15);
+        color: var(--accent);
+      }
+      .dp-table td.highlight {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--accent2);
+      }
+      .dp-table td.traced {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fcd34d;
+      }
 
-  /* BAR CHART */
-  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .bar-label { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 80px; text-align: right; flex-shrink: 0; }
-  .bar-track { flex: 1; height: 20px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
-  .bar-val { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 40px; }
+      /* BAR CHART */
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .bar-label {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text2);
+        width: 80px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .bar-track {
+        flex: 1;
+        height: 20px;
+        background: var(--surface2);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.5s;
+      }
+      .bar-val {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text2);
+        width: 40px;
+      }
 
-  /* KNAPSACK PRODUCTS */
-  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-  .product-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; background: var(--surface2); cursor: pointer; transition: all 0.15s; position: relative; }
-  .product-card:hover { border-color: var(--border2); }
-  .product-card.selected { border-color: var(--accent); background: rgba(0,229,176,0.07); }
-  .product-card .pname { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
-  .product-card .pmeta { font-family: var(--mono); font-size: 10px; color: var(--text2); display: flex; justify-content: space-between; }
-  .product-card .check { position: absolute; top: 6px; right: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); display: none; align-items: center; justify-content: center; font-size: 9px; color: #000; }
-  .product-card.selected .check { display: flex; }
+      /* KNAPSACK PRODUCTS */
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 8px;
+      }
+      .product-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        background: var(--surface2);
+        cursor: pointer;
+        transition: all 0.15s;
+        position: relative;
+      }
+      .product-card:hover {
+        border-color: var(--border2);
+      }
+      .product-card.selected {
+        border-color: var(--accent);
+        background: rgba(0, 229, 176, 0.07);
+      }
+      .product-card .pname {
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+      .product-card .pmeta {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text2);
+        display: flex;
+        justify-content: space-between;
+      }
+      .product-card .check {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #000;
+      }
+      .product-card.selected .check {
+        display: flex;
+      }
 
-  /* STAT ROW */
-  .stat-row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-  .stat { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 16px; flex: 1; min-width: 100px; }
-  .stat-label { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-bottom: 4px; }
-  .stat-value { font-size: 20px; font-weight: 600; font-family: var(--mono); color: var(--accent); }
+      /* STAT ROW */
+      .stat-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      .stat {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 16px;
+        flex: 1;
+        min-width: 100px;
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--text3);
+        font-family: var(--mono);
+        margin-bottom: 4px;
+      }
+      .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        font-family: var(--mono);
+        color: var(--accent);
+      }
 
-  /* FIBONACCI VIZ */
-  .fib-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.75rem; }
-  .fib-cell { min-width: 44px; padding: 8px 4px; text-align: center; border: 1px solid var(--border); border-radius: 5px; font-family: var(--mono); font-size: 11px; background: var(--surface2); transition: all 0.2s; }
-  .fib-cell .n { color: var(--text3); font-size: 9px; margin-bottom: 2px; }
-  .fib-cell .v { color: var(--text); }
-  .fib-cell.active { border-color: var(--accent); background: rgba(0,229,176,0.1); }
-  .fib-cell.active .v { color: var(--accent); }
-  .fib-cell.prev1 { border-color: rgba(0,229,176,0.4); background: rgba(0,229,176,0.05); }
-  .fib-cell.prev2 { border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.05); }
+      /* FIBONACCI VIZ */
+      .fib-row {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+      }
+      .fib-cell {
+        min-width: 44px;
+        padding: 8px 4px;
+        text-align: center;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-family: var(--mono);
+        font-size: 11px;
+        background: var(--surface2);
+        transition: all 0.2s;
+      }
+      .fib-cell .n {
+        color: var(--text3);
+        font-size: 9px;
+        margin-bottom: 2px;
+      }
+      .fib-cell .v {
+        color: var(--text);
+      }
+      .fib-cell.active {
+        border-color: var(--accent);
+        background: rgba(0, 229, 176, 0.1);
+      }
+      .fib-cell.active .v {
+        color: var(--accent);
+      }
+      .fib-cell.prev1 {
+        border-color: rgba(0, 229, 176, 0.4);
+        background: rgba(0, 229, 176, 0.05);
+      }
+      .fib-cell.prev2 {
+        border-color: rgba(59, 130, 246, 0.4);
+        background: rgba(59, 130, 246, 0.05);
+      }
 
-  /* PREFIX SUM HIGHLIGHT */
-  .prefix-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.75rem; }
-  .prefix-cell {
-    min-width: 44px; padding: 8px 4px; text-align: center;
-    border: 1px solid var(--border); border-radius: 5px;
-    font-family: var(--mono); font-size: 11px;
-    background: var(--surface2); transition: all 0.2s;
-  }
-  .prefix-cell .idx { color: var(--text3); font-size: 9px; margin-bottom: 2px; }
-  .prefix-cell .val { color: var(--text); }
-  .prefix-cell.match-pair { border-color: rgba(0,229,176,0.5); background: rgba(0,229,176,0.1); }
-  .prefix-cell.match-pair .val { color: var(--accent); }
+      /* PREFIX SUM HIGHLIGHT */
+      .prefix-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+      }
+      .prefix-cell {
+        min-width: 44px;
+        padding: 8px 4px;
+        text-align: center;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-family: var(--mono);
+        font-size: 11px;
+        background: var(--surface2);
+        transition: all 0.2s;
+      }
+      .prefix-cell .idx {
+        color: var(--text3);
+        font-size: 9px;
+        margin-bottom: 2px;
+      }
+      .prefix-cell .val {
+        color: var(--text);
+      }
+      .prefix-cell.match-pair {
+        border-color: rgba(0, 229, 176, 0.5);
+        background: rgba(0, 229, 176, 0.1);
+      }
+      .prefix-cell.match-pair .val {
+        color: var(--accent);
+      }
 
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } .sidebar { display: none; } }
+      /* GRID */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      @media (max-width: 640px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          display: none;
+        }
+      }
 
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
-</style>
-</head>
-<body>
-<div class="shell">
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border2);
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <!-- SIDEBAR -->
+      <nav class="sidebar">
+        <div class="logo">
+          <div class="logo-title">POLY-SHIP</div>
+          <div class="logo-sub">Algorithm Lab — DSA 3 bài</div>
+        </div>
+        <div class="nav">
+          <div class="nav-section">Dynamic Programming</div>
+          <div class="nav-item active" onclick="goto('fibonacci', this)">
+            <span>①</span> Fibonacci DP <span class="badge">O(n)</span>
+          </div>
+          <div class="nav-item" onclick="goto('knapsack', this)">
+            <span>②</span> Knapsack 0/1 <span class="badge">O(n×W)</span>
+          </div>
+          <div class="nav-section">Hashing</div>
+          <div class="nav-item" onclick="goto('subarray', this)">
+            <span>③</span> Subarray Sum = K <span class="badge">O(n)</span>
+          </div>
+        </div>
+        <div class="sidebar-footer">POLY-SHIP © 2024</div>
+      </nav>
 
-<!-- SIDEBAR -->
-<nav class="sidebar">
-  <div class="logo">
-    <div class="logo-title">POLY-SHIP</div>
-    <div class="logo-sub">Algorithm Lab — DSA 3 bài</div>
-  </div>
-  <div class="nav">
-    <div class="nav-section">Dynamic Programming</div>
-    <div class="nav-item active" onclick="goto('fibonacci', this)">
-      <span>①</span> Fibonacci DP <span class="badge">O(n)</span>
-    </div>
-    <div class="nav-item" onclick="goto('knapsack', this)">
-      <span>②</span> Knapsack 0/1 <span class="badge">O(n×W)</span>
-    </div>
-    <div class="nav-section">Hashing</div>
-    <div class="nav-item" onclick="goto('subarray', this)">
-      <span>③</span> Subarray Sum = K <span class="badge">O(n)</span>
-    </div>
-  </div>
-  <div class="sidebar-footer">POLY-SHIP © 2024</div>
-</nav>
+      <main class="main">
+        <!-- ════════════ FIBONACCI ════════════ -->
+        <div class="page active" id="page-fibonacci">
+          <div class="page-header">
+            <div class="page-tag">Dynamic Programming — Bài 1</div>
+            <div class="page-title">Fibonacci DP</div>
+            <div class="page-desc">
+              Tính số Fibonacci thứ n bằng Tabulation (bottom-up). Minh họa
+              nguyên lý cốt lõi của DP:
+              <em>lưu kết quả subproblem để không tính lại</em>.
+            </div>
+          </div>
 
-<main class="main">
+          <div class="explain-box">
+            <strong>Tại sao cần DP?</strong> — Đệ quy thuần F(5) sẽ tính F(3)
+            hai lần, F(2) ba lần... → O(2ⁿ). DP lưu lại → O(n).
+            <div class="step">
+              <span class="step-num">1</span>
+              <span>Đặt <strong>dp[0] = 0, dp[1] = 1</strong> (base case)</span>
+            </div>
+            <div class="step">
+              <span class="step-num">2</span>
+              <span>Với mỗi i từ 2 → n: <strong>dp[i] = dp[i-1] + dp[i-2]</strong></span>
+            </div>
+            <div class="step">
+              <span class="step-num">3</span>
+              <span>Kết quả là <strong>dp[n]</strong>. Mỗi ô chỉ tính <em>một lần</em>.</span>
+            </div>
+          </div>
 
-<!-- ════════════ FIBONACCI ════════════ -->
-<div class="page active" id="page-fibonacci">
-  <div class="page-header">
-    <div class="page-tag">Dynamic Programming — Bài 1</div>
-    <div class="page-title">Fibonacci DP</div>
-    <div class="page-desc">Tính số Fibonacci thứ n bằng Tabulation (bottom-up). Minh họa nguyên lý cốt lõi của DP: <em>lưu kết quả subproblem để không tính lại</em>.</div>
-  </div>
+          <div class="controls">
+            <label style="font-size: 13px; color: var(--text2)">n =</label>
+            <input type="text" id="fib-n" value="12" style="width: 60px" />
+            <button class="btn primary" onclick="runFib()">Tính F(n)</button>
+          </div>
 
-  <div class="explain-box">
-    <strong>Tại sao cần DP?</strong> — Đệ quy thuần F(5) sẽ tính F(3) hai lần, F(2) ba lần... → O(2ⁿ). DP lưu lại → O(n).
-    <div class="step"><span class="step-num">1</span><span>Đặt <strong>dp[0] = 0, dp[1] = 1</strong> (base case)</span></div>
-    <div class="step"><span class="step-num">2</span><span>Với mỗi i từ 2 → n: <strong>dp[i] = dp[i-1] + dp[i-2]</strong></span></div>
-    <div class="step"><span class="step-num">3</span><span>Kết quả là <strong>dp[n]</strong>. Mỗi ô chỉ tính <em>một lần</em>.</span></div>
-  </div>
+          <div class="stat-row" id="fib-stats"></div>
 
-  <div class="controls">
-    <label style="font-size:13px;color:var(--text2);">n =</label>
-    <input type="text" id="fib-n" value="12" style="width:60px">
-    <button class="btn primary" onclick="runFib()">Tính F(n)</button>
-  </div>
+          <div class="card">
+            <div class="card-title">
+              Bảng dp[] — F(0) → F(n) &nbsp;<span style="color: var(--accent); font-size: 10px">■</span>
+              target &nbsp;<span style="color: var(--accent2); font-size: 10px">■</span>
+              dp[i-2] &nbsp;<span style="color: rgba(0, 229, 176, 0.6); font-size: 10px">■</span>
+              dp[i-1]
+            </div>
+            <div class="fib-row" id="fib-table"></div>
+          </div>
 
-  <div class="stat-row" id="fib-stats"></div>
-
-  <div class="card">
-    <div class="card-title">Bảng dp[] — F(0) → F(n) &nbsp;<span style="color:var(--accent);font-size:10px">■</span> target &nbsp;<span style="color:var(--accent2);font-size:10px">■</span> dp[i-2] &nbsp;<span style="color:rgba(0,229,176,0.6);font-size:10px">■</span> dp[i-1]</div>
-    <div class="fib-row" id="fib-table"></div>
-  </div>
-
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Code — Tabulation (bottom-up)</div>
-      <div class="code-block"><span class="kw">def</span> <span class="fn">fibonacci</span>(n):
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">Code — Tabulation (bottom-up)</div>
+              <div class="code-block"><span class="kw">def</span> <span class="fn">fibonacci</span>(n):
     <span class="kw">if</span> n &lt;= <span class="num">1</span>:
         <span class="kw">return</span> n
-
-    dp = [<span class="num">0</span>, <span class="num">1</span>]          <span class="cm"># base cases</span>
+    dp = [<span class="num">0</span>, <span class="num">1</span>]  <span class="cm"># base cases</span>
 
     <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">2</span>, n + <span class="num">1</span>):
         <span class="hl">dp.append(dp[i-<span class="num">1</span>] + dp[i-<span class="num">2</span>])</span>  <span class="cm"># ← công thức DP</span>
 
     <span class="kw">return</span> dp[n]
 
-<span class="cm"># Space có thể tối ưu → O(1) bằng 2 biến:</span>
-<span class="cm"># a, b = 0, 1</span>
-<span class="cm"># for _ in range(n): a, b = b, a + b</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Log từng bước</div>
-      <div class="terminal" id="fib-log"></div>
-    </div>
-  </div>
-</div>
+    <span class="cm"># Space có thể tối ưu → O(1) bằng 2 biến:</span>
+    <span class="cm"># a, b = 0, 1</span>
+    <span class="cm"># for _ in range(n): a, b = b, a + b</span></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Log từng bước</div>
+              <div class="terminal" id="fib-log"></div>
+            </div>
+          </div>
+        </div>
 
-<!-- ════════════ KNAPSACK ════════════ -->
-<div class="page" id="page-knapsack">
-  <div class="page-header">
-    <div class="page-tag">Dynamic Programming — Bài 2</div>
-    <div class="page-title">Knapsack 0/1 — Combo Khuyến Mãi</div>
-    <div class="page-desc">Chọn combo sản phẩm tối ưu trong giới hạn ngân sách. Mỗi item chỉ dùng <strong>một lần</strong> (0 = không chọn, 1 = chọn).</div>
-  </div>
+        <!-- ════════════ KNAPSACK ════════════ -->
+        <div class="page" id="page-knapsack">
+          <div class="page-header">
+            <div class="page-tag">Dynamic Programming — Bài 2</div>
+            <div class="page-title">Knapsack 0/1 — Combo Khuyến Mãi</div>
+            <div class="page-desc">
+              Chọn combo sản phẩm tối ưu trong giới hạn ngân sách. Mỗi item chỉ
+              dùng <strong>một lần</strong> (0 = không chọn, 1 = chọn).
+            </div>
+          </div>
 
-  <div class="explain-box">
-    <strong>Logic vận hành:</strong> Xây bảng 2D — hàng = item, cột = ngân sách từ 0 → W.
-    <div class="step"><span class="step-num">1</span><span>Với mỗi item i, duyệt mọi ngân sách w từ 0 → W.</span></div>
-    <div class="step"><span class="step-num">2</span><span><strong>Không chọn item i:</strong> dp[i][w] = dp[i-1][w]</span></div>
-    <div class="step"><span class="step-num">3</span><span><strong>Chọn item i</strong> (nếu w ≥ weight[i]): dp[i][w] = dp[i-1][w - weight[i]] + value[i]</span></div>
-    <div class="step"><span class="step-num">4</span><span>Lấy max của 2 lựa chọn. <strong>Traceback</strong> để tìm item được chọn.</span></div>
-  </div>
+          <div class="explain-box">
+            <strong>Logic vận hành:</strong> Xây bảng 2D — hàng = item, cột =
+            ngân sách từ 0 → W.
+            <div class="step">
+              <span class="step-num">1</span>
+              <span>Với mỗi item i, duyệt mọi ngân sách w từ 0 → W.</span>
+            </div>
+            <div class="step">
+              <span class="step-num">2</span>
+              <span><strong>Không chọn item i:</strong> dp[i][w] = dp[i-1][w]</span>
+            </div>
+            <div class="step">
+              <span class="step-num">3</span>
+              <span><strong>Chọn item i</strong> (nếu w ≥ weight[i]): dp[i][w] = dp[i-1][w - weight[i]] + value[i]</span>
+            </div>
+            <div class="step">
+              <span class="step-num">4</span>
+              <span>Lấy max của 2 lựa chọn. <strong>Traceback</strong> để tìm item được chọn.</span>
+            </div>
+          </div>
 
-  <div class="controls">
-    <label style="font-size:13px;color:var(--text2);">Ngân sách W =</label>
-    <input type="text" id="ks-cap" value="10" style="width:60px">
-    <button class="btn primary" onclick="runKnapsack()">Tối ưu hóa</button>
-  </div>
+          <div class="controls">
+            <label style="font-size: 13px; color: var(--text2)">Ngân sách W =</label>
+            <input type="text" id="ks-cap" value="10" style="width: 60px" />
+            <button class="btn primary" onclick="runKnapsack()">Tối ưu hóa</button>
+          </div>
 
-  <div class="card">
-    <div class="card-title">Chọn / bỏ sản phẩm (click để toggle)</div>
-    <div class="product-grid" id="ks-products"></div>
-  </div>
+          <div class="card">
+            <div class="card-title">Chọn / bỏ sản phẩm (click để toggle)</div>
+            <div class="product-grid" id="ks-products"></div>
+          </div>
 
-  <div class="stat-row" id="ks-stats"></div>
+          <div class="stat-row" id="ks-stats"></div>
 
-  <div class="card" style="overflow-x:auto;">
-    <div class="card-title">Bảng DP 2D — dp[item][budget] &nbsp;<span style="color:var(--accent);font-size:10px">■</span> traceback path &nbsp;<span style="color:var(--accent2);font-size:10px">■</span> giá trị > 0</div>
-    <div id="ks-dp-table"></div>
-  </div>
+          <div class="card" style="overflow-x: auto">
+            <div class="card-title">
+              Bảng DP 2D — dp[item][budget] &nbsp;<span style="color: var(--accent); font-size: 10px">■</span>
+              traceback path &nbsp;<span style="color: var(--accent2); font-size: 10px">■</span>
+              giá trị &gt; 0
+            </div>
+            <div id="ks-dp-table"></div>
+          </div>
 
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Code — Knapsack 0/1</div>
-      <div class="code-block"><span class="kw">def</span> <span class="fn">knapsack</span>(weights, values, W):
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">Code — Knapsack 0/1</div>
+              <div class="code-block"><span class="kw">def</span> <span class="fn">knapsack</span>(weights, values, W):
     n = len(weights)
     dp = [[<span class="num">0</span>] * (W + <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> range(n + <span class="num">1</span>)]
 
@@ -356,59 +754,84 @@
             <span class="cm"># Chọn item i (nếu đủ túi)</span>
             <span class="kw">if</span> w &gt;= weights[i-<span class="num">1</span>]:
                 <span class="hl">dp[i][w] = max(</span>
-                    <span class="hl">dp[i][w],</span>
-                    <span class="hl">dp[i-1][w - weights[i-1]] + values[i-1]</span>
+                <span class="hl">    dp[i][w],</span>
+                <span class="hl">    dp[i-1][w - weights[i-1]] + values[i-1]</span>
                 <span class="hl">)</span>
 
     <span class="kw">return</span> dp[n][W]  <span class="cm"># max value</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Kết quả traceback</div>
-      <div class="terminal" id="ks-log"></div>
-    </div>
-  </div>
-</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Kết quả traceback</div>
+              <div class="terminal" id="ks-log"></div>
+            </div>
+          </div>
+        </div>
 
-<!-- ════════════ SUBARRAY SUM ════════════ -->
-<div class="page" id="page-subarray">
-  <div class="page-header">
-    <div class="page-tag">Hashing — Bài 3</div>
-    <div class="page-title">Subarray Sum = K</div>
-    <div class="page-desc">Đếm số dải con có tổng bằng k. Dùng <strong>prefix sum + hash map</strong> để giải O(n) thay vì O(n²) nested loop.</div>
-  </div>
+        <!-- ════════════ SUBARRAY SUM ════════════ -->
+        <div class="page" id="page-subarray">
+          <div class="page-header">
+            <div class="page-tag">Hashing — Bài 3</div>
+            <div class="page-title">Subarray Sum = K</div>
+            <div class="page-desc">
+              Đếm số dải con có tổng bằng k. Dùng
+              <strong>prefix sum + hash map</strong> để giải O(n) thay vì O(n²)
+              nested loop.
+            </div>
+          </div>
 
-  <div class="explain-box">
-    <strong>Insight chính:</strong> Nếu prefixSum[j] - prefixSum[i] = k, thì arr[i+1..j] là dải cần tìm.
-    <div class="step"><span class="step-num">1</span><span>Duyệt từng phần tử, cộng vào <strong>prefixSum</strong> đang chạy.</span></div>
-    <div class="step"><span class="step-num">2</span><span>Với mỗi bước: kiểm tra xem <strong>prefixSum - k</strong> đã xuất hiện trong map chưa?</span></div>
-    <div class="step"><span class="step-num">3</span><span>Nếu có → tìm thấy một dải! Cộng số lần xuất hiện vào count.</span></div>
-    <div class="step"><span class="step-num">4</span><span>Lưu prefixSum hiện tại vào map (tần suất). <strong>map[0]=1</strong> để xử lý dải bắt đầu từ index 0.</span></div>
-  </div>
+          <div class="explain-box">
+            <strong>Insight chính:</strong> Nếu prefixSum[j] - prefixSum[i] = k,
+            thì arr[i+1..j] là dải cần tìm.
+            <div class="step">
+              <span class="step-num">1</span>
+              <span>Duyệt từng phần tử, cộng vào <strong>prefixSum</strong> đang chạy.</span>
+            </div>
+            <div class="step">
+              <span class="step-num">2</span>
+              <span>Với mỗi bước: kiểm tra xem <strong>prefixSum - k</strong> đã xuất hiện trong map chưa?</span>
+            </div>
+            <div class="step">
+              <span class="step-num">3</span>
+              <span>Nếu có → tìm thấy một dải! Cộng số lần xuất hiện vào count.</span>
+            </div>
+            <div class="step">
+              <span class="step-num">4</span>
+              <span>Lưu prefixSum hiện tại vào map (tần suất). <strong>map[0]=1</strong> để xử lý dải bắt đầu từ index 0.</span>
+            </div>
+          </div>
 
-  <div class="controls">
-    <label style="font-size:13px;color:var(--text2);">Mảng:</label>
-    <input type="text" id="sub-arr" value="3,1,2,4,2,3,1,2,1,4" style="width:240px">
-    <label style="font-size:13px;color:var(--text2);">Target k =</label>
-    <input type="text" id="sub-k" value="6" style="width:50px">
-    <button class="btn primary" onclick="runSubarray()">Tính</button>
-  </div>
+          <div class="controls">
+            <label style="font-size: 13px; color: var(--text2)">Mảng:</label>
+            <input
+              type="text"
+              id="sub-arr"
+              value="3,1,2,4,2,3,1,2,1,4"
+              style="width: 240px"
+            />
+            <label style="font-size: 13px; color: var(--text2)">Target k =</label>
+            <input type="text" id="sub-k" value="6" style="width: 50px" />
+            <button class="btn primary" onclick="runSubarray()">Tính</button>
+          </div>
 
-  <div class="stat-row" id="sub-stats"></div>
+          <div class="stat-row" id="sub-stats"></div>
 
-  <div class="card">
-    <div class="card-title">Prefix Sum Table</div>
-    <div id="sub-viz" style="overflow-x:auto;"></div>
-  </div>
+          <div class="card">
+            <div class="card-title">Prefix Sum Table</div>
+            <div id="sub-viz" style="overflow-x: auto"></div>
+          </div>
 
-  <div class="card">
-    <div class="card-title">Các dải tìm được (highlight)</div>
-    <div id="sub-pairs" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0;"></div>
-  </div>
+          <div class="card">
+            <div class="card-title">Các dải tìm được (highlight)</div>
+            <div
+              id="sub-pairs"
+              style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 0"
+            ></div>
+          </div>
 
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Code — Prefix Sum + HashMap</div>
-      <div class="code-block"><span class="kw">def</span> <span class="fn">subarray_sum</span>(nums, k):
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">Code — Prefix Sum + HashMap</div>
+              <div class="code-block"><span class="kw">def</span> <span class="fn">subarray_sum</span>(nums, k):
     map_ = {<span class="num">0</span>: <span class="num">1</span>}  <span class="cm"># prefixSum → tần suất</span>
     prefix_sum = <span class="num">0</span>
     count = <span class="num">0</span>
@@ -424,276 +847,292 @@
         map_[prefix_sum] = map_.get(prefix_sum, <span class="num">0</span>) + <span class="num">1</span>
 
     <span class="kw">return</span> count</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Chi tiết từng bước</div>
+              <div class="terminal" id="sub-log"></div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
-    <div class="card">
-      <div class="card-title">Chi tiết từng bước</div>
-      <div class="terminal" id="sub-log"></div>
-    </div>
-  </div>
-</div>
 
-</main>
-</div>
+    <script>
+      // ══════════════════════════════════════════
+      // NAVIGATION
+      // ══════════════════════════════════════════
+      function goto(id, el) {
+        document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
+        document.getElementById("page-" + id).classList.add("active");
+        el.classList.add("active");
+        if (id === "fibonacci") runFib();
+        if (id === "knapsack") {
+          renderProducts();
+          setTimeout(runKnapsack, 50);
+        }
+        if (id === "subarray") runSubarray();
+      }
 
-<script>
-// ══════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════
-function goto(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  el.classList.add('active');
-  if (id === 'fibonacci') runFib();
-  if (id === 'knapsack') { renderProducts(); setTimeout(runKnapsack, 50); }
-  if (id === 'subarray') runSubarray();
-}
+      // ══════════════════════════════════════════
+      // FIBONACCI DP
+      // ══════════════════════════════════════════
+      function runFib() {
+        let n = parseInt(document.getElementById("fib-n").value) || 12;
+        n = Math.max(0, n);
 
-// ══════════════════════════════════════════
-// FIBONACCI DP
-// ══════════════════════════════════════════
-function runFib() {
-  let n = parseInt(document.getElementById('fib-n').value) || 12;
-  n = Math.max(0, Math.min(n, 25));
+        // Chạy nhiều lần để đo chính xác hơn
+        const iterations = 1000;
+        const startTime = performance.now();
 
-  // Build dp array
-  const dp = [0, 1];
-  for (let i = 2; i <= n; i++) dp[i] = dp[i-1] + dp[i-2];
+        let dp;
+        for (let iter = 0; iter < iterations; iter++) {
+          dp = [0n, 1n];
+          for (let i = 2; i <= n; i++) dp[i] = dp[i - 1] + dp[i - 2];
+        }
 
-  // Render cells
-  const tbl = document.getElementById('fib-table');
-  tbl.innerHTML = dp.map((v, i) => {
-    let cls = '';
-    if (i === n) cls = 'active';
-    else if (i === n-1) cls = 'prev1';
-    else if (i === n-2) cls = 'prev2';
-    return `<div class="fib-cell ${cls}">
-      <div class="n">F(${i})</div>
-      <div class="v">${v}</div>
-    </div>`;
-  }).join('');
+        const endTime = performance.now();
+        const totalTime = endTime - startTime;
+        const avgTime = totalTime / iterations;
 
-  // Stats
-  document.getElementById('fib-stats').innerHTML = `
-    <div class="stat"><div class="stat-label">F(${n})</div><div class="stat-value">${dp[n]}</div></div>
-    <div class="stat"><div class="stat-label">Subproblems</div><div class="stat-value">${n+1}</div></div>
-    <div class="stat"><div class="stat-label">Time</div><div class="stat-value" style="font-size:14px">O(n)</div></div>
-    <div class="stat"><div class="stat-label">Space</div><div class="stat-value" style="font-size:14px">O(n)</div></div>
+        document.getElementById("fib-stats").innerHTML = `
+    <div class="stat"><div class="stat-label">F(${n})</div><div class="stat-value" style="font-size:13px;word-break:break-all">${dp[n].toString()}</div></div>
+    <div class="stat"><div class="stat-label">Subproblems</div><div class="stat-value">${n + 1}</div></div>
+    <div class="stat"><div class="stat-label">Total (${iterations} runs)</div><div class="stat-value" style="font-size:14px">${totalTime.toFixed(4)} ms</div></div>
+    <div class="stat"><div class="stat-label">Avg/run</div><div class="stat-value" style="font-size:14px">${avgTime.toFixed(6)} ms</div></div>
   `;
 
-  // Log
-  const steps = [];
-  steps.push('Base cases: dp[0]=0, dp[1]=1\n');
-  for (let i = 2; i <= Math.min(n, 15); i++) {
-    steps.push(`dp[${i}] = dp[${i-1}] + dp[${i-2}] = ${dp[i-1]} + ${dp[i-2]} = ${dp[i]}`);
-  }
-  if (n > 15) steps.push(`... (${n-15} bước nữa)`);
-  steps.push(`\n→ F(${n}) = ${dp[n]}`);
-  document.getElementById('fib-log').textContent = steps.join('\n');
-}
+        // Render fib cells
+        const fibTable = document.getElementById("fib-table");
+        let cellsHtml = "";
+        for (let i = 0; i <= n; i++) {
+          const cls = i === n ? "active" : i === n - 1 ? "prev1" : i === n - 2 ? "prev2" : "";
+          cellsHtml += `<div class="fib-cell ${cls}"><div class="n">F(${i})</div><div class="v">${dp[i].toString()}</div></div>`;
+        }
+        fibTable.innerHTML = cellsHtml;
 
-setTimeout(runFib, 50);
+        // Log từng bước
+        let log = `Fibonacci DP — F(${n})\n\n`;
+        log += `dp[0] = 0  (base)\ndp[1] = 1  (base)\n`;
+        for (let i = 2; i <= n; i++) {
+          log += `dp[${i}] = dp[${i-1}] + dp[${i-2}] = ${dp[i-1]} + ${dp[i-2]} = ${dp[i]}\n`;
+        }
+        log += `\nKết quả: F(${n}) = ${dp[n]}`;
+        document.getElementById("fib-log").textContent = log;
+      }
 
-// ══════════════════════════════════════════
-// KNAPSACK 0/1
-// ══════════════════════════════════════════
-const PRODUCTS = [
-  { name: "Áo thun",       w: 2, v: 30 },
-  { name: "Quần jean",     w: 4, v: 70 },
-  { name: "Giày thể thao", w: 5, v: 90 },
-  { name: "Túi xách",      w: 3, v: 50 },
-  { name: "Mũ lưỡi trai",  w: 1, v: 20 },
-  { name: "Dép sandal",    w: 2, v: 35 },
-  { name: "Balo laptop",   w: 6, v: 110 },
-];
+      setTimeout(runFib, 50);
 
-let KS_SELECTED = new Set([0, 1, 2, 3, 4, 5, 6]);
+      // ══════════════════════════════════════════
+      // KNAPSACK 0/1
+      // ══════════════════════════════════════════
+      const PRODUCTS = [
+        { name: "Áo thun", w: 2, v: 30 },
+        { name: "Quần jean", w: 4, v: 70 },
+        { name: "Giày thể thao", w: 5, v: 90 },
+        { name: "Túi xách", w: 3, v: 50 },
+        { name: "Mũ lưỡi trai", w: 1, v: 20 },
+        { name: "Dép sandal", w: 2, v: 35 },
+        { name: "Balo laptop", w: 6, v: 110 },
+      ];
 
-function renderProducts() {
-  document.getElementById('ks-products').innerHTML = PRODUCTS.map((p, i) => `
-    <div class="product-card ${KS_SELECTED.has(i) ? 'selected' : ''}" onclick="toggleProduct(${i})">
+      let KS_SELECTED = new Set([0, 1, 2, 3, 4, 5, 6]);
+
+      function renderProducts() {
+        document.getElementById("ks-products").innerHTML = PRODUCTS.map(
+          (p, i) => `
+    <div class="product-card ${KS_SELECTED.has(i) ? "selected" : ""}" onclick="toggleProduct(${i})">
       <div class="check">✓</div>
       <div class="pname">${p.name}</div>
       <div class="pmeta"><span>w=${p.w}</span><span>v=${p.v}</span></div>
-    </div>`).join('');
-}
-
-function toggleProduct(i) {
-  KS_SELECTED.has(i) ? KS_SELECTED.delete(i) : KS_SELECTED.add(i);
-  renderProducts();
-  runKnapsack();
-}
-
-function runKnapsack() {
-  const cap = parseInt(document.getElementById('ks-cap').value) || 10;
-  const items = PRODUCTS.filter((_, i) => KS_SELECTED.has(i));
-  const ws = items.map(p => p.w);
-  const vs = items.map(p => p.v);
-  const n = items.length;
-
-  // Build DP table
-  const dp = Array.from({ length: n+1 }, () => new Array(cap+1).fill(0));
-  for (let i = 1; i <= n; i++) {
-    for (let w = 0; w <= cap; w++) {
-      dp[i][w] = dp[i-1][w]; // không chọn item i
-      if (w >= ws[i-1]) {
-        dp[i][w] = Math.max(dp[i][w], dp[i-1][w - ws[i-1]] + vs[i-1]); // chọn item i
+    </div>`,
+        ).join("");
       }
-    }
-  }
 
-  // Traceback
-  const chosen = new Set();
-  const traceSet = new Set(); // (i,w) cells on traceback path
-  let w = cap;
-  for (let i = n; i > 0; i--) {
-    traceSet.add(`${i},${w}`);
-    if (dp[i][w] !== dp[i-1][w]) {
-      chosen.add(i-1);
-      w -= ws[i-1];
-    }
-  }
-  traceSet.add(`0,${w}`);
+      function toggleProduct(i) {
+        KS_SELECTED.has(i) ? KS_SELECTED.delete(i) : KS_SELECTED.add(i);
+        renderProducts();
+        runKnapsack();
+      }
 
-  // Stats
-  const totalW = [...chosen].reduce((s, i) => s + ws[i], 0);
-  document.getElementById('ks-stats').innerHTML = `
+      function runKnapsack() {
+        const cap = parseInt(document.getElementById("ks-cap").value) || 10;
+        const items = PRODUCTS.filter((_, i) => KS_SELECTED.has(i));
+        const ws = items.map((p) => p.w);
+        const vs = items.map((p) => p.v);
+        const n = items.length;
+
+        // Build DP table
+        const dp = Array.from({ length: n + 1 }, () =>
+          new Array(cap + 1).fill(0),
+        );
+        for (let i = 1; i <= n; i++) {
+          for (let w = 0; w <= cap; w++) {
+            dp[i][w] = dp[i - 1][w];
+            if (w >= ws[i - 1]) {
+              dp[i][w] = Math.max(
+                dp[i][w],
+                dp[i - 1][w - ws[i - 1]] + vs[i - 1],
+              );
+            }
+          }
+        }
+
+        // Traceback
+        const chosen = new Set();
+        const traceSet = new Set();
+        let w = cap;
+        for (let i = n; i > 0; i--) {
+          traceSet.add(`${i},${w}`);
+          if (dp[i][w] !== dp[i - 1][w]) {
+            chosen.add(i - 1);
+            w -= ws[i - 1];
+          }
+        }
+        traceSet.add(`0,${w}`);
+
+        // Stats
+        const totalW = [...chosen].reduce((s, i) => s + ws[i], 0);
+        document.getElementById("ks-stats").innerHTML = `
     <div class="stat"><div class="stat-label">Ngân sách W</div><div class="stat-value">${cap}</div></div>
     <div class="stat"><div class="stat-label">Max Value</div><div class="stat-value">${dp[n][cap]}</div></div>
     <div class="stat"><div class="stat-label">Weight dùng</div><div class="stat-value">${totalW}/${cap}</div></div>
     <div class="stat"><div class="stat-label">Items chọn</div><div class="stat-value">${chosen.size}</div></div>
   `;
 
-  // DP table (cap <= 15 để dễ đọc)
-  const displayCap = Math.min(cap, 15);
-  const tblDiv = document.getElementById('ks-dp-table');
-  let html = `<table class="dp-table"><tr><th>item \\ W</th>`;
-  for (let ww = 0; ww <= displayCap; ww++) html += `<th>${ww}</th>`;
-  if (displayCap < cap) html += `<th>…</th><th>${cap}</th>`;
-  html += `</tr>`;
+        // DP table
+        const displayCap = Math.min(cap, 15);
+        const tblDiv = document.getElementById("ks-dp-table");
+        let html = `<table class="dp-table"><tr><th>item \\ W</th>`;
+        for (let ww = 0; ww <= displayCap; ww++) html += `<th>${ww}</th>`;
+        if (displayCap < cap) html += `<th>…</th><th>${cap}</th>`;
+        html += `</tr>`;
 
-  for (let i = 0; i <= n; i++) {
-    const label = i === 0 ? 'base' : items[i-1].name.substring(0, 8);
-    html += `<tr><th>${label}</th>`;
-    for (let ww = 0; ww <= displayCap; ww++) {
-      const isTrace = traceSet.has(`${i},${ww}`);
-      const cls = isTrace ? 'traced' : dp[i][ww] > 0 ? 'highlight' : '';
-      html += `<td class="${cls}">${dp[i][ww]}</td>`;
-    }
-    if (displayCap < cap) {
-      const isTraceEnd = traceSet.has(`${i},${cap}`);
-      html += `<td class="dim">…</td><td class="${isTraceEnd ? 'traced' : dp[i][cap] > 0 ? 'highlight' : ''}">${dp[i][cap]}</td>`;
-    }
-    html += `</tr>`;
-  }
-  html += `</table>`;
-  tblDiv.innerHTML = html;
+        for (let i = 0; i <= n; i++) {
+          const label = i === 0 ? "base" : items[i - 1].name.substring(0, 8);
+          html += `<tr><th>${label}</th>`;
+          for (let ww = 0; ww <= displayCap; ww++) {
+            const isTrace = traceSet.has(`${i},${ww}`);
+            const cls = isTrace ? "traced" : dp[i][ww] > 0 ? "highlight" : "";
+            html += `<td class="${cls}">${dp[i][ww]}</td>`;
+          }
+          if (displayCap < cap) {
+            const isTraceEnd = traceSet.has(`${i},${cap}`);
+            html += `<td class="dim">…</td><td class="${isTraceEnd ? "traced" : dp[i][cap] > 0 ? "highlight" : ""}">${dp[i][cap]}</td>`;
+          }
+          html += `</tr>`;
+        }
+        html += `</table>`;
+        tblDiv.innerHTML = html;
 
-  // Log
-  let s = `Knapsack 0/1 — Ngân sách: ${cap}\n\n`;
-  s += `Items có sẵn:\n`;
-  for (let i = 0; i < n; i++) s += `  ${items[i].name.padEnd(16)} w=${ws[i]}  v=${vs[i]}\n`;
-  s += `\nTraceback — Items được chọn:\n`;
-  for (const i of [...chosen].sort()) s += `  ✔ ${items[i].name.padEnd(16)} w=${ws[i]}  v=${vs[i]}\n`;
-  s += `\nTổng giá trị: ${dp[n][cap]}\nTổng weight:  ${totalW} / ${cap}`;
-  document.getElementById('ks-log').textContent = s;
-}
+        // Log
+        let s = `Knapsack 0/1 — Ngân sách: ${cap}\n\n`;
+        s += `Items có sẵn:\n`;
+        for (let i = 0; i < n; i++)
+          s += `  ${items[i].name.padEnd(16)} w=${ws[i]}  v=${vs[i]}\n`;
+        s += `\nTraceback — Items được chọn:\n`;
+        for (const i of [...chosen].sort())
+          s += `  ✔ ${items[i].name.padEnd(16)} w=${ws[i]}  v=${vs[i]}\n`;
+        s += `\nTổng giá trị: ${dp[n][cap]}\nTổng weight:  ${totalW} / ${cap}`;
+        document.getElementById("ks-log").textContent = s;
+      }
 
-renderProducts();
-setTimeout(runKnapsack, 50);
+      renderProducts();
+      setTimeout(runKnapsack, 50);
 
-// ══════════════════════════════════════════
-// SUBARRAY SUM = K
-// ══════════════════════════════════════════
-function subarraySum(nums, k) {
-  const map = { 0: 1 };
-  let ps = 0, count = 0;
-  const steps = [];
-  const subarrays = [];
+      // ══════════════════════════════════════════
+      // SUBARRAY SUM = K
+      // ══════════════════════════════════════════
+      function subarraySum(nums, k) {
+        const map = { 0: 1 };
+        let ps = 0, count = 0;
+        const steps = [];
+        const subarrays = [];
 
-  for (let j = 0; j < nums.length; j++) {
-    ps += nums[j];
-    const need = ps - k;
-    const found = map[need] || 0;
-    if (found > 0) count += found;
-    map[ps] = (map[ps] || 0) + 1;
-    steps.push({j, num: nums[j], ps, need, found, mapSnap: Object.assign({}, map)});
-  }
+        for (let j = 0; j < nums.length; j++) {
+          ps += nums[j];
+          const need = ps - k;
+          const found = map[need] || 0;
+          if (found > 0) count += found;
+          map[ps] = (map[ps] || 0) + 1;
+          steps.push({ j, num: nums[j], ps, need, found, mapSnap: Object.assign({}, map) });
+        }
 
-  // Find actual subarrays for display
-  for (let i = 0; i < nums.length; i++) {
-    let s = 0;
-    for (let j = i; j < nums.length; j++) {
-      s += nums[j];
-      if (s === k) subarrays.push([i, j]);
-    }
-  }
+        for (let i = 0; i < nums.length; i++) {
+          let s = 0;
+          for (let j = i; j < nums.length; j++) {
+            s += nums[j];
+            if (s === k) subarrays.push([i, j]);
+          }
+        }
 
-  return { count, subarrays, steps };
-}
+        return { count, subarrays, steps };
+      }
 
-function runSubarray() {
-  const arr = document.getElementById('sub-arr').value.split(',').map(Number).filter(n => !isNaN(n));
-  const k = parseInt(document.getElementById('sub-k').value) || 6;
-  const { count, subarrays, steps } = subarraySum(arr, k);
+      function runSubarray() {
+        const arr = document
+          .getElementById("sub-arr")
+          .value.split(",")
+          .map(Number)
+          .filter((n) => !isNaN(n));
+        const k = parseInt(document.getElementById("sub-k").value) || 6;
+        const { count, subarrays, steps } = subarraySum(arr, k);
 
-  // Stats
-  document.getElementById('sub-stats').innerHTML = `
-    <div class="stat"><div class="stat-label">Mảng</div><div class="stat-value" style="font-size:13px">[${arr.join(',')}]</div></div>
+        document.getElementById("sub-stats").innerHTML = `
+    <div class="stat"><div class="stat-label">Mảng</div><div class="stat-value" style="font-size:13px">[${arr.join(",")}]</div></div>
     <div class="stat"><div class="stat-label">Target k</div><div class="stat-value">${k}</div></div>
     <div class="stat"><div class="stat-label">Số dải</div><div class="stat-value">${count}</div></div>
   `;
 
-  // Prefix sum table
-  let ps = [0];
-  for (const x of arr) ps.push(ps[ps.length-1] + x);
+        let ps = [0];
+        for (const x of arr) ps.push(ps[ps.length - 1] + x);
 
-  // Which prefix indices are involved in a match pair?
-  const pairIdx = new Set();
-  for (const [i, j] of subarrays) {
-    pairIdx.add(i);     // ps[i] = prefix before start
-    pairIdx.add(j+1);   // ps[j+1] = prefix up to end
-  }
+        const pairIdx = new Set();
+        for (const [i, j] of subarrays) {
+          pairIdx.add(i);
+          pairIdx.add(j + 1);
+        }
 
-  const viz = document.getElementById('sub-viz');
-  let html = `
+        const viz = document.getElementById("sub-viz");
+        let html = `
     <table class="dp-table" style="margin-bottom:0.75rem">
       <tr><th>index i</th>`;
-  for (let i = 0; i <= arr.length; i++) html += `<th>${i}</th>`;
-  html += `</tr><tr><th>arr[i]</th><td class="dim">—</td>`;
-  for (const x of arr) html += `<td>${x}</td>`;
-  html += `</tr><tr><th>prefix[i]</th>`;
-  for (let i = 0; i <= arr.length; i++) {
-    const cls = pairIdx.has(i) ? 'match-pair' : '';
-    html += `<td class="${cls}">${ps[i]}</td>`;
-  }
-  html += `</tr></table>`;
-  viz.innerHTML = html;
+        for (let i = 0; i <= arr.length; i++) html += `<th>${i}</th>`;
+        html += `</tr><tr><th>arr[i]</th><td class="dim">—</td>`;
+        for (const x of arr) html += `<td>${x}</td>`;
+        html += `</tr><tr><th>prefix[i]</th>`;
+        for (let i = 0; i <= arr.length; i++) {
+          const cls = pairIdx.has(i) ? "match-pair" : "";
+          html += `<td class="${cls}">${ps[i]}</td>`;
+        }
+        html += `</tr></table>`;
+        viz.innerHTML = html;
 
-  // Pair chips
-  const pairsEl = document.getElementById('sub-pairs');
-  if (subarrays.length === 0) {
-    pairsEl.innerHTML = `<span style="color:var(--text3);font-family:var(--mono);font-size:12px">Không tìm thấy dải nào</span>`;
-  } else {
-    pairsEl.innerHTML = subarrays.map(([i, j]) =>
-      `<div style="background:rgba(0,229,176,0.1);border:1px solid rgba(0,229,176,0.3);border-radius:8px;padding:6px 12px;font-family:var(--mono);font-size:11px;color:var(--accent)">
-        arr[${i}..${j}] = [${arr.slice(i,j+1).join('+')}] = ${k}
-      </div>`
-    ).join('');
-  }
+        const pairsEl = document.getElementById("sub-pairs");
+        if (subarrays.length === 0) {
+          pairsEl.innerHTML = `<span style="color:var(--text3);font-family:var(--mono);font-size:12px">Không tìm thấy dải nào</span>`;
+        } else {
+          pairsEl.innerHTML = subarrays
+            .map(
+              ([i, j]) =>
+                `<div style="background:rgba(0,229,176,0.1);border:1px solid rgba(0,229,176,0.3);border-radius:8px;padding:6px 12px;font-family:var(--mono);font-size:11px;color:var(--accent)">
+        arr[${i}..${j}] = [${arr.slice(i, j + 1).join("+")}] = ${k}
+      </div>`,
+            )
+            .join("");
+        }
 
-  // Log step by step
-  let s = `map = { 0:1 }  ← base (dải bắt đầu từ đầu)\n\n`;
-  for (const {j, num, ps: psum, need, found} of steps) {
-    s += `j=${j}  arr[j]=${num}  prefixSum=${psum}  need=${psum}-${k}=${need}`;
-    if (found > 0) s += `  ✔ map[${need}]=${found}  +${found} vào count`;
-    s += '\n';
-  }
-  s += `\nTổng: ${count} dải có tổng = ${k}`;
-  document.getElementById('sub-log').textContent = s;
-}
+        let s = `map = { 0:1 }  ← base (dải bắt đầu từ đầu)\n\n`;
+        for (const { j, num, ps: psum, need, found } of steps) {
+          s += `j=${j}  arr[j]=${num}  prefixSum=${psum}  need=${psum}-${k}=${need}`;
+          if (found > 0) s += `  ✔ map[${need}]=${found}  +${found} vào count`;
+          s += "\n";
+        }
+        s += `\nTổng: ${count} dải có tổng = ${k}`;
+        document.getElementById("sub-log").textContent = s;
+      }
 
-setTimeout(runSubarray, 50);
-</script>
-</body>
+      setTimeout(runSubarray, 50);
+    </script>
+  </body>
 </html>
